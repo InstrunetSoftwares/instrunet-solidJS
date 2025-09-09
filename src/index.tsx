@@ -3,7 +3,6 @@ import {render} from 'solid-js/web';
 import 'solid-devtools';
 
 import './index.css';
-import App from './App';
 import {lazy} from "solid-js";
 import {Route, Router} from "@solidjs/router";
 
@@ -15,7 +14,9 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 	);
 }
 
-const Main = lazy(() => import("./App"))
+const InstrunetIndex = lazy(() => import("./PageNavigator"))
 render(() => <Router>
-	<Route path={"/"} component={Main}></Route>
+	<Route path={"/instrunet"}>
+		<Route path="/" component={InstrunetIndex}></Route>
+	</Route>
 </Router>, root!);
