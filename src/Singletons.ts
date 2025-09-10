@@ -1,17 +1,21 @@
 ﻿import {ENUS} from "./i18n/en-US";
 import {ZHCN} from "./i18n/zh-CN";
+import Ii18n from "./i18n/Ii18n";
 
-const i18n = ( ()=>
+const i18n: Ii18n = (await ( async ()=>
     {
         console.log(navigator.language);
         switch(navigator.language){
             case "zh-CN":
-                return ZHCN;
+                return (await import("./i18n/zh-CN")).ZHCN;
+            case "zh-TW" || "zh-HK" || "zh-MO":
+                return (await import("./i18n/zh_Traditional")).ZHT;
             default:
-                return ENUS;
+                return (await import("./i18n/en-US")).ENUS;
         }
     }
-)();
+)()) as unknown as Ii18n;
+console.log(i18n)
 
 // const baseUrl = "https://andyxie.cn:8200/";
 const baseUrl = "http://localhost:5052/";

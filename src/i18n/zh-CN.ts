@@ -2,7 +2,7 @@
 
 const Instrunet  = {
 	TITLE: "伴奏网",
-	DESC: "AI支持的，免费无登录的伴奏分享网站",
+	DESC: "AI支持的，免费的伴奏分享网站",
 	ALL: "全部",
 	QUEUE: "队列",
 	CONTACT: "联系我",
