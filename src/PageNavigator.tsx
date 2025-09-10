@@ -1,5 +1,7 @@
 import type { Component } from 'solid-js';
 import style from "./PageNavigator.module.css"
+import {i18n, WebRoutes} from "./Singletons";
+import {Navigate} from "@solidjs/router";
 
 
 const PageNavigator: Component = () => {
@@ -8,18 +10,28 @@ const PageNavigator: Component = () => {
       <div class="hero-content ">
         <div class="max-w-screen">
           <h1 class="text-5xl font-bold py-10">AXCWG</h1>
-          <div  class={"flex gap-4"}>
-            <CardThisPage title={"伴奏网"} info={"AI支持的，免费无登录的伴奏分享网站"}/>
-            <CardThisPage title={"语音转文字工具"} info={"“不大可用”于歌词类“带有旋律”的语音音频。"}/>
+
+          <div class={"grid grid-cols-1 sm:grid-cols-2 gap-4"}>
+            <CardThisPage href={WebRoutes.instruNet+"/"} title={i18n.Instrunet.TITLE} info={i18n.Instrunet.DESC}/>
+            <CardThisPage href={WebRoutes.speechToText+"/"} title={i18n.STT.TITLE} info={i18n.STT.DESC}/>
+            <CardThisPage href={"https://andyxie.cn:5000"} title={i18n.Sanctuary.TITLE} info={i18n.Sanctuary.DESC}/>
+            <CardThisPage href={WebRoutes.unlockMusic+"/"} title={i18n.MusicUnlock.TITLE} info={i18n.MusicUnlock.DESC}/>
+            <CardThisPage href={"https://andyxie.cn:4001"} title={i18n.JustTalk.TITLE} info={i18n.JustTalk.DESC}/>
+
           </div>
+
+
+
 
         </div>
       </div>
     </div>
   </>
 };
-const CardThisPage = ({title, info}: {title:string, info: string})=> {
-  return <div class={"card bg-base-100 shadow-sm min-w-100 " + style.card}>
+const CardThisPage = ({title, info, href}: {title:string, info: string, href?: string })=> {
+  return <div onClick={()=>{
+
+  }} class={"card bg-base-100 shadow-sm sm:min-w-10 min-w-100 " + style.card}>
     <div class={"card-body"}>
       <div class={"card-title"}>
         {title}
@@ -27,6 +39,7 @@ const CardThisPage = ({title, info}: {title:string, info: string})=> {
       <p>
         {info}
       </p>
+      <a class={"btn "} href={href ?? "/"}>{i18n.General.ACCESS}</a>
     </div>
   </div>
 }

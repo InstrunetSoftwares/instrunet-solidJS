@@ -1,4 +1,4 @@
-﻿import Ii18n from "./Ii18n";
+import Ii18n from "./Ii18n";
 
 const Instrunet  = {
 	TITLE: "伴奏网",
@@ -39,7 +39,6 @@ const General = {
 	INFO_LOGIN_ERROR: "登录失败，请检查用户名和密码是否正确。",
 	INFO_LOGIN_SUCCESS: "登录成功，正在跳转……",
 }
-
-export const ZHCN: Ii18n = {
+export const ENUS: Ii18n = {
 	Instrunet, STT, Sanctuary, MusicUnlock, JustTalk, General
 }
