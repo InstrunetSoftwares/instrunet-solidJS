@@ -6,6 +6,7 @@ import './index.css';
 import {Component, lazy} from "solid-js";
 import {Route, Router} from "@solidjs/router";
 import NavBar from "./Instrunet/Components/NavBar";
+import Home from "./Instrunet/Home";
 
 const root = document.getElementById('root');
 
@@ -41,6 +42,10 @@ render(() => {
 				<Route path={"/login"} component={InstrunetLogin}>
 
 				</Route>
+				<Route path={"/home"} component={()=><>
+					{GlobalNavBar}
+					<Home/>
+				</>}/>
 			</>
 		})()}/>
 

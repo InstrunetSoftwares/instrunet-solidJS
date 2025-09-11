@@ -1,11 +1,16 @@
 import {BiRegularLeftArrowAlt} from "solid-icons/bi";
 import {baseUrl, i18n, WebRoutes} from "../../Singletons";
 import {createSignal} from "solid-js";
+import {FiMenu} from "solid-icons/fi";
 
-const NavBar = ()=> {
-	interface UserInfo{
-		uuid: string, username: string, email: string, avatar: Blob
+const NavBar = () => {
+	interface UserInfo {
+		uuid: string,
+		username: string,
+		email: string,
+		avatar: Blob
 	}
+
 	const [userInfo, setUserInfo] = createSignal<UserInfo | undefined>();
 	const [fetchDone, setFetchDone] = createSignal<Boolean>(false);
 	fetch(baseUrl + "userapi", {
@@ -13,14 +18,18 @@ const NavBar = ()=> {
 			"Content-Type": "application/json",
 		}
 	}).then((response: Response) => {
-		switch(response.status){
+		switch (response.status) {
 			case 200:
 				response.json().then((data) => {
-					setUserInfo({
-						uuid: data.uuid, username: data.username, email: data.email, avatar: new Blob([])
+					fetch(baseUrl + "avatar?uuid=" + data.uuid).then((r) => r.blob()).then(b => {
+						setUserInfo({
+							uuid: data.uuid, username: data.username, email: data.email, avatar: b
+						})
+						setFetchDone(true)
 
 					})
-					setFetchDone(true)
+
+
 				})
 				break;
 			case 500:
@@ -28,14 +37,13 @@ const NavBar = ()=> {
 				setFetchDone(true)
 		}
 	})
-	return <div class="navbar bg-base-100  border-b-1 border-b-base-300 ">
-		<div >
-			<a class="btn btn-ghost text-xl btn-square" onClick={()=>{
-				history.back()
-			}}>
-				<BiRegularLeftArrowAlt size={"1.5rem"}/>
+
+	return <div class="navbar px-5 bg-base-100  border-b-1 border-b-base-300 ">
+		<div>
+			<a class="btn btn-ghost text-xl btn-square" href={"/"}>
+				<FiMenu size={"1.5rem"}/>
 			</a>
-			<a class="btn btn-ghost text-xl" href={WebRoutes.instruNet}>{i18n.Instrunet.TITLE}</a>
+			<NavBarButtonInSig href={WebRoutes.instruNet}>{i18n.Instrunet.TITLE}</NavBarButtonInSig>
 			<NavBarButtonInSig href={WebRoutes.instruNet + "/search"}>{i18n.Instrunet.ALL}</NavBarButtonInSig>
 			<NavBarButtonInSig href={WebRoutes.instruNet + "/queue"}>{i18n.Instrunet.QUEUE}</NavBarButtonInSig>
 			<NavBarButtonInSig href={"mailto:xiey0@qq.com"}>{i18n.Instrunet.CONTACT}</NavBarButtonInSig>
@@ -46,10 +54,14 @@ const NavBar = ()=> {
 		</div>
 		<div class={" flex justify-end grow"}>
 			{
-				fetchDone() ?  userInfo()? <NavBarButtonInSig href={WebRoutes.instruNet + "/home"}>{userInfo()!.username}</NavBarButtonInSig> :
+				fetchDone() ? userInfo() ?
+					<a class={"btn-square rounded-xl"} href={WebRoutes.instruNet + "/home"}><img class={"inline-block size-10 rounded-xl"}
+																				 src={URL.createObjectURL(userInfo()!.avatar)}></img></a> :
 					<>
-						<NavBarButtonInSig href={WebRoutes.instruNet + "/login"}>{i18n.General.LOGIN}</NavBarButtonInSig>
-						<NavBarButtonInSig href={WebRoutes.instruNet + "/register"}>{i18n.General.REG}</NavBarButtonInSig>
+						<NavBarButtonInSig
+							href={WebRoutes.instruNet + "/login"}>{i18n.General.LOGIN}</NavBarButtonInSig>
+						<NavBarButtonInSig
+							href={WebRoutes.instruNet + "/register"}>{i18n.General.REG}</NavBarButtonInSig>
 					</> : null
 			}
 
@@ -57,7 +69,19 @@ const NavBar = ()=> {
 
 	</div>
 }
-const NavBarButtonInSig = ({children, href}: {children: Element | string, href?: string | undefined})=> {
-	return <a href={href ?? ""} class="btn btn-md btn-ghost text-xl  font-light ">{children}</a>
+const NavBarButtonInSig = ({children, href, className}: {
+	children: any,
+	href?: string | undefined,
+	className?: string
+}) => {
+	const [bold, setBold] = createSignal(false);
+	let lastPath = location.pathname;
+	setInterval(()=>{
+		location.pathname === href ? setBold(true) : setBold(false);
+	}, 50)
+
+	return <a href={href ?? ""} classList={{["btn"]: true, ["btn-md"]: true, ["btn-ghost"]: true, ["text-xl"]: true, ["font-bold"]: bold(), ["font-light"]: !bold()}}
+
+	>{children}</a>
 }
 export default NavBar;
