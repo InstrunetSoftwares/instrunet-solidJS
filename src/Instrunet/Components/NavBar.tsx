@@ -40,11 +40,11 @@ const NavBar = () => {
 
 	return <div class="navbar px-5 bg-base-100  border-b-1 border-b-base-300 ">
 		<div>
-			<a class="btn btn-ghost text-xl btn-square" href={"/"}>
+			<a class="btn  text-xl btn-square" href={"/"}>
 				<FiMenu size={"1.5rem"}/>
 			</a>
 			<NavBarButtonInSig href={WebRoutes.instruNet}>{i18n.Instrunet.TITLE}</NavBarButtonInSig>
-			<NavBarButtonInSig href={WebRoutes.instruNet + "/search"}>{i18n.Instrunet.ALL}</NavBarButtonInSig>
+			<NavBarButtonInSig href={WebRoutes.instruNet + "/search?p="}>{i18n.Instrunet.ALL}</NavBarButtonInSig>
 			<NavBarButtonInSig href={WebRoutes.instruNet + "/queue"}>{i18n.Instrunet.QUEUE}</NavBarButtonInSig>
 			<NavBarButtonInSig href={"mailto:xiey0@qq.com"}>{i18n.Instrunet.CONTACT}</NavBarButtonInSig>
 			<NavBarButtonInSig href={"https://afdian.com/a/re_xiey0"}>{i18n.Instrunet.DONATE}</NavBarButtonInSig>
@@ -75,12 +75,13 @@ const NavBarButtonInSig = ({children, href, className}: {
 	className?: string
 }) => {
 	const [bold, setBold] = createSignal(false);
-	let lastPath = location.pathname;
 	setInterval(()=>{
-		location.pathname === href ? setBold(true) : setBold(false);
+		// console.log(location.pathname)
+		location.pathname === href && location.search === "" ? setBold(true) : setBold(false);
 	}, 50)
 
-	return <a href={href ?? ""} classList={{["btn"]: true, ["btn-md"]: true, ["btn-ghost"]: true, ["text-xl"]: true, ["font-bold"]: bold(), ["font-light"]: !bold()}}
+
+	return <a href={href ?? ""} classList={{["btn"]: true, ["btn-md"]: true, ["btn-ghost"]: true, ["text-xl"]: true, ["font-bold"]: bold(), ["font-light"]: !bold()}} class={className??""}
 
 	>{children}</a>
 }

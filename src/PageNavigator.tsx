@@ -31,7 +31,7 @@ const PageNavigator: Component = () => {
 const CardThisPage = ({title, info, href}: {title:string, info: string, href?: string })=> {
   return <div onClick={()=>{
 
-  }} class={"card bg-base-100 shadow-sm sm:min-w-10 min-w-100 " + style.card}>
+  }} class={"card bg-base-100 shadow-sm sm:max-w-100  " + style.card}>
     <div class={"card-body"}>
       <div class={"card-title"}>
         {title}

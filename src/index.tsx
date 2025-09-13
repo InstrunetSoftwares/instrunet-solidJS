@@ -19,7 +19,8 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 const AXCWGIndex = lazy(() => import("./PageNavigator"))
 const InstrunetIndex = lazy(() => import("./Instrunet/InstrunetIndex"))
 const InstrunetQueuePage = lazy(() => import("./Instrunet/Queue"))
-const InstrunetLogin = lazy(()=>import("./Instrunet/Login"))
+const InstrunetLogin = lazy(() => import("./Instrunet/Login"))
+const InstrunetSearch = lazy(() => import("./Instrunet/Search"))
 render(() => {
 	const GlobalNavBar = <NavBar/>;
 	return <Router>
@@ -42,10 +43,14 @@ render(() => {
 				<Route path={"/login"} component={InstrunetLogin}>
 
 				</Route>
-				<Route path={"/home"} component={()=><>
+				<Route path={"/home"} component={() => <>
 					{GlobalNavBar}
 					<Home/>
 				</>}/>
+				<Route path={"/search"} component={() => <>
+					{GlobalNavBar}
+					<InstrunetSearch/>
+				</>}></Route>
 			</>
 		})()}/>
 

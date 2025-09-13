@@ -83,7 +83,7 @@ const Login = () => {
 										if (response.ok) {
 											setPageStatus(PageStatus.SUCCESS)
 											setTimeout(()=>{
-												window.location.replace(WebRoutes.instruNet+"/")
+												window.location.replace(WebRoutes.instruNet)
 											}, 1000)
 										} else {
 											setPageStatus(PageStatus.ERROR)

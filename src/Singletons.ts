@@ -3,7 +3,6 @@ import {ZHCN} from "./i18n/zh-CN";
 import Ii18n from "./i18n/Ii18n";
 
 const i18n: Ii18n = (await (async () => {
-		console.log(navigator.language);
 		switch (navigator.language) {
 			case "zh-CN":
 				return (await import("./i18n/zh-CN")).ZHCN;
@@ -16,7 +15,6 @@ const i18n: Ii18n = (await (async () => {
 		}
 	}
 )()) as unknown as Ii18n;
-console.log(i18n)
 
 // const baseUrl = "https://andyxie.cn:8200/";
 const baseUrl = "http://localhost:5052/";
