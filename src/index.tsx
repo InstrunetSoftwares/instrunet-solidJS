@@ -21,6 +21,7 @@ const InstrunetIndex = lazy(() => import("./Instrunet/InstrunetIndex"))
 const InstrunetQueuePage = lazy(() => import("./Instrunet/Queue"))
 const InstrunetLogin = lazy(() => import("./Instrunet/Login"))
 const InstrunetSearch = lazy(() => import("./Instrunet/Search"))
+const InstrunetPlayer = lazy(() => import("./Instrunet/Player"))
 render(() => {
 	const GlobalNavBar = <NavBar/>;
 	return <Router>
@@ -51,6 +52,12 @@ render(() => {
 					{GlobalNavBar}
 					<InstrunetSearch/>
 				</>}></Route>
+				<Route path={"/player"} component={() =>
+					<>
+						{GlobalNavBar}
+						<InstrunetPlayer/>
+					</>
+				}></Route>
 			</>
 		})()}/>
 

@@ -2,6 +2,7 @@ import {createEffect, createSignal} from "solid-js";
 import {baseUrl, white} from "../Singletons";
 import style from "../PageNavigator.module.css"
 import {useSearchParams} from "@solidjs/router";
+import {Kind} from "../Singletons";
 
 const Search = () => {
 
@@ -90,15 +91,15 @@ const Search = () => {
 								return <div class={`card bg-base-200 ${style.card}`}>
 
 
-									<div className={"card-body flex flex-row"}>
+									<div className={"card-body flex flex-row"} style={{ "align-items": "center" }}>
 										{
-											<img class={"size-20 rounded-sm"}
+											<img class={"h-20 aspect-auto rounded-sm mx-auto"}
 												 src={baseUrl + `getAlbumCover?id=${item.uuid}`}/>
 										}
 										<div class={"grow ml-2"}>
 											<div className={"card-title text-3xl"}>{item.song_name}</div>
 											<div className={"divider mt-0 mb-0"}></div>
-											<span>{item.album_name} - {item.artist}</span>
+											<span>{item.album_name} - {item.artist} - {Kind[item.kind]}</span>
 										</div>
 
 									</div>

@@ -1,6 +1,4 @@
-﻿import {ENUS} from "./i18n/en-US";
-import {ZHCN} from "./i18n/zh-CN";
-import Ii18n from "./i18n/Ii18n";
+﻿import Ii18n from "./i18n/Ii18n";
 
 const i18n: Ii18n = (await (async () => {
 		switch (navigator.language) {
@@ -16,8 +14,10 @@ const i18n: Ii18n = (await (async () => {
 	}
 )()) as unknown as Ii18n;
 
-// const baseUrl = "https://andyxie.cn:8200/";
-const baseUrl = "http://localhost:5052/";
+const baseUrl = "https://andyxie.cn:8200/";
+// const baseUrl = "http://localhost:5052/";
+// const baseUrl = "http://localhost:5298/";  // new api
+
 
 const Kind: string[] = [
 	"去和声伴奏",
