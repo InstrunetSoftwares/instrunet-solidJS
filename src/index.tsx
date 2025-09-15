@@ -6,6 +6,7 @@ import './index.css';
 import { Component, lazy } from "solid-js";
 import { Route, Router } from "@solidjs/router";
 import { BunchOfButtons, NavBar, NavBarButtonInSig } from "./Instrunet/Components/NavBar";
+import { FiMenu } from 'solid-icons/fi';
 
 const root = document.getElementById('root');
 
@@ -39,6 +40,9 @@ render(() => {
 				<div class="drawer-side">
 					<label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
 					<ul class="menu bg-base-200 min-h-full w-80 p-4">
+						<a class="btn btn-ghost text-xl font-medium" href={"/"}>
+										菜单
+									</a>
 						<BunchOfButtons/>
 					</ul>
 				</div>
@@ -68,7 +72,7 @@ render(() => {
 				<Route path={"/player"} component={() =>
 					<Wrapper Content={InstrunetPlayer} />
 				}></Route>
-				<Route path={"/playlist"} component={()=><Wrapper Content={InstrunetPlaylist}/>}/>
+				<Route path={"/playlist/:playlistuuid"} component={()=><Wrapper Content={InstrunetPlaylist}/>}/>
 			</>
 		})()} />
 

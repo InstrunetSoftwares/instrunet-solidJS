@@ -139,10 +139,10 @@ const Home = () => {
 				<For each={uploadedPlaylist()}>
 					{item => {
 						return <>
-							<div >
+							<a href={WebRoutes.instruNet + "/playlist/"+item.uuid}>
 								<img src={baseUrl + "playlist-tmb?asFile=true&playlistuuid=" + item.uuid} class=" w-20 h-20 border-2" />
 								<div class="text-sm text-center mt-2">{item.title}</div>
-							</div>
+							</a>
 
 						</>
 					}}
