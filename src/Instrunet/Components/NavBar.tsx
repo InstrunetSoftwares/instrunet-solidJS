@@ -1,9 +1,9 @@
-import {BiRegularLeftArrowAlt} from "solid-icons/bi";
-import {baseUrl, i18n, WebRoutes} from "../../Singletons";
-import {createSignal} from "solid-js";
-import {FiMenu} from "solid-icons/fi";
+import { BiRegularLeftArrowAlt } from "solid-icons/bi";
+import { baseUrl, i18n, WebRoutes } from "../../Singletons";
+import { Component, createSignal, JSX } from "solid-js";
+import { FiMenu } from "solid-icons/fi";
 
-const NavBar = () => {
+const NavBar = ({Buttons}: {Buttons: JSX.Element}) => {
 	interface UserInfo {
 		uuid: string,
 		username: string,
@@ -39,24 +39,34 @@ const NavBar = () => {
 	})
 
 	return <div class="navbar px-5 bg-base-100  border-b-1 border-b-base-300 ">
-		<div>
+		<div class="flex-none lg:hidden">
+			<label for="my-drawer-3" aria-label="open sidebar" class="btn btn-square btn-ghost">
+				<svg
+					xmlns="http://www.w3.org/2000/svg"
+					fill="none"
+					viewBox="0 0 24 24"
+					class="inline-block h-6 w-6 stroke-current"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M4 6h16M4 12h16M4 18h16"
+					></path>
+				</svg>
+			</label>
+		</div>
+		<div class="lg:block hidden">
 			<a class="btn  text-xl btn-square" href={"/"}>
-				<FiMenu size={"1.5rem"}/>
+				<FiMenu size={"1.5rem"} />
 			</a>
-			<NavBarButtonInSig href={WebRoutes.instruNet}>{i18n.Instrunet.TITLE}</NavBarButtonInSig>
-			<NavBarButtonInSig href={WebRoutes.instruNet + "/search?p="}>{i18n.Instrunet.ALL}</NavBarButtonInSig>
-			<NavBarButtonInSig href={WebRoutes.instruNet + "/queue"}>{i18n.Instrunet.QUEUE}</NavBarButtonInSig>
-			<NavBarButtonInSig href={"mailto:xiey0@qq.com"}>{i18n.Instrunet.CONTACT}</NavBarButtonInSig>
-			<NavBarButtonInSig href={"https://afdian.com/a/re_xiey0"}>{i18n.Instrunet.DONATE}</NavBarButtonInSig>
-			<NavBarButtonInSig href={"https://andyxie.cn:5000/"}>{i18n.Instrunet.FORUM}</NavBarButtonInSig>
-			<NavBarButtonInSig href={"https://github.com/AXCWG/instrunet-vite"}>{i18n.Instrunet.GIT}</NavBarButtonInSig>
-			<NavBarButtonInSig href={WebRoutes.instruNet + "/secret"}>{i18n.Instrunet.SECRET}</NavBarButtonInSig>
+			{Buttons}
 		</div>
 		<div class={" flex justify-end grow"}>
 			{
 				fetchDone() ? userInfo() ?
 					<a class={"btn-square rounded-xl"} href={WebRoutes.instruNet + "/home"}><img class={"inline-block size-10 rounded-xl"}
-																				 src={URL.createObjectURL(userInfo()!.avatar)}></img></a> :
+						src={URL.createObjectURL(userInfo()!.avatar)}></img></a> :
 					<>
 						<NavBarButtonInSig
 							href={WebRoutes.instruNet + "/login"}>{i18n.General.LOGIN}</NavBarButtonInSig>
@@ -69,20 +79,28 @@ const NavBar = () => {
 
 	</div>
 }
-const NavBarButtonInSig = ({children, href, className}: {
+const NavBarButtonInSig = ({ children, href, className }: {
 	children: any,
 	href?: string | undefined,
 	className?: string
 }) => {
 	const [bold, setBold] = createSignal(false);
-	setInterval(()=>{
-		// console.log(location.pathname)
+	setInterval(() => {
 		location.pathname === href && location.search === "" ? setBold(true) : setBold(false);
 	}, 50)
-
-
-	return <a href={href ?? ""} classList={{["btn"]: true, ["btn-md"]: true, ["btn-ghost"]: true, ["text-xl"]: true, ["font-bold"]: bold(), ["font-light"]: !bold()}} class={className??""}
+	return <a href={href ?? ""} classList={{ ["btn"]: true, ["btn-md"]: true, ["btn-ghost"]: true, ["text-xl"]: true, ["font-bold"]: bold(), ["font-light"]: !bold() }} class={className ?? ""}
 
 	>{children}</a>
 }
-export default NavBar;
+const BunchOfButtons = () => {
+	
+	return <><NavBarButtonInSig href={WebRoutes.instruNet}>{i18n.Instrunet.TITLE}</NavBarButtonInSig>
+		<NavBarButtonInSig href={WebRoutes.instruNet + "/search"}>{i18n.Instrunet.ALL}</NavBarButtonInSig>
+		<NavBarButtonInSig href={WebRoutes.instruNet + "/queue"}>{i18n.Instrunet.QUEUE}</NavBarButtonInSig>
+		<NavBarButtonInSig href={"mailto:xiey0@qq.com"}>{i18n.Instrunet.CONTACT}</NavBarButtonInSig>
+		<NavBarButtonInSig href={"https://afdian.com/a/re_xiey0"}>{i18n.Instrunet.DONATE}</NavBarButtonInSig>
+		<NavBarButtonInSig href={"https://andyxie.cn:5000/"}>{i18n.Instrunet.FORUM}</NavBarButtonInSig>
+		<NavBarButtonInSig href={"https://github.com/AXCWG/instrunet-vite"}>{i18n.Instrunet.GIT}</NavBarButtonInSig>
+		<NavBarButtonInSig href={WebRoutes.instruNet + "/secret"}>{i18n.Instrunet.SECRET}</NavBarButtonInSig></>
+}
+export { NavBar, NavBarButtonInSig, BunchOfButtons };

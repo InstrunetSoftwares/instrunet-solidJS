@@ -1,12 +1,11 @@
 /* @refresh reload */
-import {render} from 'solid-js/web';
+import { render } from 'solid-js/web';
 import 'solid-devtools';
 
 import './index.css';
-import {Component, lazy} from "solid-js";
-import {Route, Router} from "@solidjs/router";
-import NavBar from "./Instrunet/Components/NavBar";
-import Home from "./Instrunet/Home";
+import { Component, lazy } from "solid-js";
+import { Route, Router } from "@solidjs/router";
+import { BunchOfButtons, NavBar, NavBarButtonInSig } from "./Instrunet/Components/NavBar";
 
 const root = document.getElementById('root');
 
@@ -22,44 +21,56 @@ const InstrunetQueuePage = lazy(() => import("./Instrunet/Queue"))
 const InstrunetLogin = lazy(() => import("./Instrunet/Login"))
 const InstrunetSearch = lazy(() => import("./Instrunet/Search"))
 const InstrunetPlayer = lazy(() => import("./Instrunet/Player"))
+const InstrunetHome = lazy(() => import("./Instrunet/Home"))
+const InstrunetLogout = lazy(()=> import ("./Instrunet/Logout"))
+const InstrunetPlaylist = lazy(()=>import("./Instrunet/Playlist"))
 render(() => {
-	const GlobalNavBar = <NavBar/>;
+	const SharedButtons = <BunchOfButtons />;
+	const GlobalNavBar = <NavBar Buttons={SharedButtons} />
+
+	const Wrapper = ({ Content }: { Content: Component }) => {
+		return <>
+			<div class="drawer">
+				<input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
+				<div class="drawer-content flex flex-col">
+					{GlobalNavBar}
+					<Content />
+				</div>
+				<div class="drawer-side">
+					<label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
+					<ul class="menu bg-base-200 min-h-full w-80 p-4">
+						<BunchOfButtons/>
+					</ul>
+				</div>
+			</div>
+		</>
+	}
+
 	return <Router>
-		<Route path={"/"} component={AXCWGIndex}/>
+		<Route path={"/"} component={AXCWGIndex} />
 		<Route path={"/instrunet"} children={(() => {
 			return <>
 				<Route path="/" component={() => {
-					return <>
-						{GlobalNavBar}
-						<InstrunetIndex/>
-					</>
+					return <Wrapper Content={InstrunetIndex} />
 				}}></Route>
-				<Route path={"/queue"} component={() => {
-					return <>
-						{GlobalNavBar}
-						<InstrunetQueuePage/>
-					</>
-				}}>
+				<Route path={"/queue"} component={() => <Wrapper Content={InstrunetQueuePage} />}>
 				</Route>
 				<Route path={"/login"} component={InstrunetLogin}>
 
 				</Route>
+				<Route path={"/logout"} component={InstrunetLogout}/>
 				<Route path={"/home"} component={() => <>
-					{GlobalNavBar}
-					<Home/>
-				</>}/>
+					<Wrapper Content={InstrunetHome} />
+				</>} />
 				<Route path={"/search"} component={() => <>
-					{GlobalNavBar}
-					<InstrunetSearch/>
+					<Wrapper Content={InstrunetSearch} />
 				</>}></Route>
 				<Route path={"/player"} component={() =>
-					<>
-						{GlobalNavBar}
-						<InstrunetPlayer/>
-					</>
+					<Wrapper Content={InstrunetPlayer} />
 				}></Route>
+				<Route path={"/playlist"} component={()=><Wrapper Content={InstrunetPlaylist}/>}/>
 			</>
-		})()}/>
+		})()} />
 
 
 	</Router>
