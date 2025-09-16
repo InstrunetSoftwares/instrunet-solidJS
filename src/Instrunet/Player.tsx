@@ -24,6 +24,10 @@ const Player = () => {
 	const [lrcIndex, setLrcIndex] = createSignal(0);
 	const [playInfo, setPlayInfo] = createSignal<PlayInfo | null | undefined>(undefined);
 	const [lyrics, setLyrics] = createSignal<LyricObject[] | null | undefined>(null);
+	const [playUrl, setPlayUrl ] = createSignal<string>(""); 
+	createEffect(()=>{
+		setPlayUrl(baseUrl + params.play)
+	})
 	createEffect(() => {
 		fetch(baseUrl + `getSingle?id=${params.play}`).then(res => {
 			if (res.ok) {
@@ -71,8 +75,8 @@ const Player = () => {
 										/>
 
 									</div>
-									<PlayerComponent url={baseUrl + params.play}
-										PlayInfo={playInfo()}></PlayerComponent>
+									<PlayerComponent url={playUrl}
+										PlayInfo={playInfo}></PlayerComponent>
 
 
 								</div>
