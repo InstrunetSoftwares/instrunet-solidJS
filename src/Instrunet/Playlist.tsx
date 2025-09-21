@@ -1,5 +1,5 @@
 import {useParams, useSearchParams} from "@solidjs/router";
-import {createEffect, createSignal, Show} from "solid-js";
+import {createEffect, createSignal, on, Show} from "solid-js";
 import {baseUrl, Kind} from "../Singletons";
 import PlayerComponent from "./Components/PlayerComponent";
 import {AiOutlineDelete, AiOutlineSwap} from "solid-icons/ai";
@@ -91,11 +91,18 @@ const Playlist = () => {
 		arr[b] = objA;
 		return arr;
 	}
-	function immutableInsertBefore(array:any[], index: number, target: number){
+
+	function immutableInsertBefore(array: any[], index: number, target: number) {
 		let arr = [...array]
 		arr.splice(index, 1);
-		arr.splice(target,0,array[index]);
+		arr.splice(target, 0, array[index]);
 		return arr;
+	}
+
+	function ParamHook() {
+		setSearchParams({
+			track: playCurrentIndex()
+		})
 	}
 
 	return <>
@@ -120,14 +127,14 @@ const Playlist = () => {
 								} else {
 									setPlayCurrentIndex(playCurrentIndex() - 1)
 								}
-								setSearchParams({track: playCurrentIndex()})
+								ParamHook()
 							}} url={playUrl} onFinished={(e) => {
 								if (playCurrentIndex() === playlistSongInfo()!.length - 1) {
 									setPlayCurrentIndex(0)
 								} else {
 									setPlayCurrentIndex(playCurrentIndex() + 1)
 								}
-								setSearchParams({track: playCurrentIndex()})
+								ParamHook()
 
 
 							}} onNextPressed={() => {
@@ -136,7 +143,7 @@ const Playlist = () => {
 								} else {
 									setPlayCurrentIndex(playCurrentIndex() + 1)
 								}
-								setSearchParams({track: playCurrentIndex()})
+								ParamHook()
 							}} PlayInfo={playCurrentSong} index={playCurrentIndex}/>
 						</Show>
 					</Show>
@@ -159,22 +166,30 @@ const Playlist = () => {
 						<Show when={playlistSongInfo()} keyed={true}>
 							{
 								playlistSongInfo()!.map((item, index) => {
-									return <tr classList={{["bg-base-300"]: playCurrentIndex() === index}}>
+									return <tr classList={{["bg-base-300"]: playCurrentIndex() === index}}
+											   class={"hover:bg-base-200"}>
 										<td class={"lg:table-cell hidden"} onClick={() => {
 											setPlayCurrentIndex(index)
 										}}>{playlistInfo()?.content[index] ? <img class="lg:max-w-15 max-w-10"
 																				  src={baseUrl + "getAlbumCover?id=" + playlistInfo()?.content[index]}/> : null} </td>
 										<td onClick={() => {
 											setPlayCurrentIndex(index)
+											ParamHook()
 										}}>{item.song_name}</td>
 										<td onClick={() => {
 											setPlayCurrentIndex(index)
+											ParamHook()
+
 										}}>{item.album_name}</td>
 										<td onClick={() => {
 											setPlayCurrentIndex(index)
+											ParamHook()
+
 										}}>{item.artist}</td>
 										<td onClick={() => {
 											setPlayCurrentIndex(index)
+											ParamHook()
+
 										}}>{Kind[item.kind]}</td>
 										{playlistInfo()?.owner === localStorage.getItem("uuid") ? <td>
 											<button class="btn bg-red-500 btn-square" onClick={() => {
@@ -198,9 +213,15 @@ const Playlist = () => {
 															...playlistInsertInfo(), beforeB: index, inserting: false
 														})
 														setPlaylistInfo({
-															...playlistInfo()!, content: immutableInsertBefore(playlistInfo()!.content, playlistInsertInfo().a!, playlistInsertInfo().beforeB!)
+															...playlistInfo()!,
+															content: immutableInsertBefore(playlistInfo()!.content, playlistInsertInfo().a!, playlistInsertInfo().beforeB!)
 														})
 														setPlayListSongInfo(immutableInsertBefore(playlistSongInfo()!, playlistInsertInfo().a!, playlistInsertInfo().beforeB!))
+														fetch(baseUrl + "upload-playlist", {
+															method: "POST", credentials: "include", headers: {
+																"Content-Type": "application/json"
+															}, body: JSON.stringify(playlistInfo())
+														})
 													}}>前</button> :
 													<button class={"btn btn-square"} onClick={(e) => {
 														setPlaylistInsertInfo({
