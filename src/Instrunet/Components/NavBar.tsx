@@ -33,6 +33,7 @@ const NavBar = ({Buttons}: {Buttons: JSX.Element}) => {
 				})
 				break;
 			case 500:
+				localStorage.removeItem("uuid")
 				setUserInfo(undefined);
 				setFetchDone(true)
 		}

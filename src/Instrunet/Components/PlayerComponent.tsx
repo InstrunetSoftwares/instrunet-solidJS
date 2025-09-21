@@ -27,7 +27,7 @@ const PlayerComponent = ({url, PlayInfo, onFinished, onNextPressed, onPreviousPr
 	}
 
 	const [playingInfo, setPlayingInfo] = createSignal<PlayingInfo>({
-		playing: true, timeNow: 0, volume: 1, timeFull: 99999, loading: true
+		playing: false, timeNow: 0, volume: 1, timeFull: 99999, loading: false
 	});
 	const [lock, setLock] = createSignal(false);
 
