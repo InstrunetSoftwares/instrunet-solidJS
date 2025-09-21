@@ -1,11 +1,7 @@
 import { useSearchParams } from "@solidjs/router";
-import { createEffect, createSignal, onMount, Show } from "solid-js";
-import { baseUrl, Kind } from "../Singletons";
-import { CgPlayButton, CgPlayForwards, CgPlayPause, CgPlayPauseR } from "solid-icons/cg";
-import { BsFastForward, BsFastForwardBtnFill, BsForward, BsPause, BsPauseBtn, BsPlayBtn } from "solid-icons/bs";
+import { createEffect, createSignal, Show } from "solid-js";
+import { baseUrl } from "../Singletons";
 import style from "./Player.module.css"
-import { AiFillFastForward } from "solid-icons/ai";
-import { TiMediaFastForward, TiMediaRewind } from "solid-icons/ti";
 import PlayerComponent from "./Components/PlayerComponent";
 interface PlayInfo {
 	song_name: string,

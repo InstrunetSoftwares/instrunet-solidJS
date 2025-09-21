@@ -103,11 +103,11 @@ const Home = () => {
 				<table class={`table lg:table-md table-xs table-zebra border-2 border-base-content/10`}>
 					<thead>
 						<tr>
-							<td colspan={6} class="" onClick={() => setUploadedCollapsed(!uploadedCollapsed())}><div class="flex"><div>{uploadedCollapsed() ? "展开" : "收缩"}</div><div class="grow "></div><div class="">{uploadedCollapsed() ? <BiSolidLeftArrow class="h-full" /> : <BiSolidDownArrow class="h-full" />}</div></div></td>
+							<td colspan={5} class="" onClick={() => setUploadedCollapsed(!uploadedCollapsed())}><div class="flex"><div>{uploadedCollapsed() ? "展开" : "收缩"}</div><div class="grow "></div><div class="">{uploadedCollapsed() ? <BiSolidLeftArrow class="h-full" /> : <BiSolidDownArrow class="h-full" />}</div></div></td>
 
 						</tr>
 						<tr>
-							<td class="md:block hidden">Cover</td>
+
 							<td>歌名</td>
 							<td>专辑</td>
 							<td>艺术家</td>
@@ -121,7 +121,7 @@ const Home = () => {
 						</> : <></>}><></>
 							{uploadedSong() ? uploadedSong()!.map((item, index) => {
 								return <tr classList={{ ["hidden"]: uploadedCollapsed() }}>
-									<td class="md:block hidden"><img class="md:max-w-13 max-w-10 " src={baseUrl + "getAlbumCover?id=" + item.uuid} /></td>
+
 									<td>{item.song_name}</td>
 									<td>{item.album_name}</td>
 									<td>{item.artist}</td>

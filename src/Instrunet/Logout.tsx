@@ -5,6 +5,7 @@ const Logout = ()=>{
         credentials: "include"
     }).then(res=>{
         if(res.ok){
+            localStorage.removeItem("uuid")
             window.location.href = WebRoutes.instruNet
         }
     })

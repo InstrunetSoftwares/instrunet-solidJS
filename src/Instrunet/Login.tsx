@@ -82,9 +82,13 @@ const Login = () => {
 										})
 										if (response.ok) {
 											setPageStatus(PageStatus.SUCCESS)
-											setTimeout(()=>{
-												window.location.replace(WebRoutes.instruNet)
-											}, 1000)
+											response.json().then(data => {
+												localStorage.setItem("uuid", data.uid)
+												setTimeout(()=>{
+													window.location.replace(WebRoutes.instruNet)
+												}, 1000)
+											})
+
 										} else {
 											setPageStatus(PageStatus.ERROR)
 										}

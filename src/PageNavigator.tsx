@@ -12,7 +12,8 @@ const PageNavigator: Component = () => {
           <h1 class="text-5xl font-bold py-10">AXCWG</h1>
 
           <div class={"grid grid-cols-1 sm:grid-cols-2 gap-4"}>
-            <CardThisPage href={WebRoutes.instruNet} title={i18n.Instrunet.TITLE} info={i18n.Instrunet.DESC}/>
+              <CardThisPage href={WebRoutes.instruNet} title={i18n.Instrunet.TITLE} info={i18n.Instrunet.DESC}/>
+
             <CardThisPage href={WebRoutes.speechToText} title={i18n.STT.TITLE} info={i18n.STT.DESC}/>
             <CardThisPage href={"https://andyxie.cn:5000"} title={i18n.Sanctuary.TITLE} info={i18n.Sanctuary.DESC}/>
             <CardThisPage href={WebRoutes.unlockMusic} title={i18n.MusicUnlock.TITLE} info={i18n.MusicUnlock.DESC}/>
