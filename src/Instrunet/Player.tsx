@@ -1,10 +1,11 @@
-import { useSearchParams } from "@solidjs/router";
-import { createEffect, createSignal, Show } from "solid-js";
-import { baseUrl } from "../Singletons";
+import {useSearchParams} from "@solidjs/router";
+import {createEffect, createSignal, Show} from "solid-js";
+import {baseUrl, WebRoutes} from "../Singletons";
 import style from "./Player.module.css"
 import PlayerComponent from "./Components/PlayerComponent";
 import {BsDownload} from "solid-icons/bs";
 import {BiRegularDownArrow, BiRegularUpArrow} from "solid-icons/bi";
+
 interface PlayInfo {
 	song_name: string,
 	album_name: string,
@@ -16,20 +17,59 @@ interface PlayInfo {
 const Player = () => {
 
 	interface LyricObject {
-		album: string, artist: string, cover: string, id: string, lyrics: string, title: string
+		album: string,
+		artist: string,
+		cover: string,
+		id: string,
+		lyrics: string,
+		title: string
+	}
+	interface Comment{
+		uuid:  string, content: string,  date: number, poster: string, master: string,
+		posterUsername: string | undefined,  //POST Init.
+		dateTime: Date | undefined //POST
 	}
 	const [params, setParams] = useSearchParams();
 	const [lrcIndex, setLrcIndex] = createSignal(0);
 	const [playInfo, setPlayInfo] = createSignal<PlayInfo | null | undefined>(undefined);
 	const [lyrics, setLyrics] = createSignal<LyricObject[] | null | undefined>(null);
-	const [playUrl, setPlayUrl ] = createSignal<string>("");
+	const [playUrl, setPlayUrl] = createSignal<string>("");
 	const [currentVote, setCurrentVote] = createSignal<number>(NaN);
-	createEffect(()=>{
+	const [voted, setVoted] = createSignal<number>(0);
+	const [comments, setComments] = createSignal<Comment[]>([]);
+	const [commentContent, setCommentContent] = createSignal<string>("");
+	createEffect(() => {
 		setPlayUrl(baseUrl + params.play)
 	})
-	fetch(baseUrl + "api/community/getvote?uuid="+params.play).then(res=>{
-		res.text().then(result=>{
+	fetch(baseUrl + "api/community/getvote?uuid=" + params.play).then(res => {
+		res.text().then(result => {
 			setCurrentVote(Number.parseInt(result as string))
+		})
+	})
+	fetch(baseUrl + "api/community/hasvoted?uuid=" + params.play, {
+		credentials: "include"
+	}).then(res => {
+		res.text().then(result => {
+			setVoted(Number.parseInt(result as string))
+		})
+	})
+	fetch(baseUrl + "api/community/getComment?uuid=" + params.play).then(res => {
+		res.json().then(res => {
+			setComments(res)
+			for (let i = 0; i < comments().length; i++){
+
+				let comment = comments()[i];
+				//Date
+				let date = new Date(comment.date);
+
+				fetch(baseUrl + "userapi?getname=true&uuid=" + comment.poster).then(res => res.text()).then((res) => {
+					let newArr = [...comments()]
+					newArr[i].posterUsername = res;
+					newArr[i].dateTime = date;
+					setComments(newArr);
+				})
+			}
+			console.log(comments())
 		})
 	})
 	createEffect(() => {
@@ -65,20 +105,20 @@ const Player = () => {
 
 	})
 	return <>
-		<div className="hero bg-base-200 ">
+		<div class="hero bg-base-200 ">
 			<div
-				className="hero-content pt-15 overflow-y-scroll block sm:[align-items:center] sm:max-w-[85vw] sm:h-[calc(100vh-4rem)] "
+				class="hero-content pt-15 overflow-y-scroll block sm:[align-items:center] sm:max-w-[85vw] sm:h-[calc(100vh-4rem)] "
 				style={{"align-items": "center", "scrollbar-width": "auto"}}>
-				<div className={""}>
+				<div class={""}>
 					<Show when={playInfo()} keyed={true} fallback={playInfo() === undefined ? <><span
 						class={"loading loading-spinner loading-xl"}></span></> : <><span></span></>}>
 						<>
-							<div className={"grid sm:grid-cols-2 gap-5 h-full "}>
+							<div class={"grid sm:grid-cols-2 gap-5 h-full "}>
 
-								<div className={"h-full flex flex-col"} style={{"justify-content": "center"}}>
+								<div class={"h-full flex flex-col"} style={{"justify-content": "center"}}>
 									<div>
 										<div
-											className={style.CardAnimation + " mb-4  md:size-70 sm:size-50 lg:size-90 xl:size-120 size-30 mx-auto bg-center bg-contain"}
+											class={style.CardAnimation + " mb-4  md:size-70 sm:size-50 lg:size-90 xl:size-120 size-30 mx-auto bg-center bg-contain"}
 											style={{
 												"background-repeat": "no-repeat",
 												"background-image": `url('${baseUrl}getAlbumCover?id=${params.play}`
@@ -91,9 +131,9 @@ const Player = () => {
 
 
 								</div>
-								<div className={"max-h-[42rem] flex flex-col w-full rounded-2xl bg-base-100"}>
+								<div class={"max-h-[42rem] flex flex-col w-full rounded-2xl bg-base-100"}>
 									<Show when={lyrics()} keyed={true} fallback={<></>}>
-										<div className={"flex"}>
+										<div class={"flex"}>
 											<select class="grow select w-full min-h-10" tabIndex={lrcIndex()}
 													onInput={(e) => {
 														setLrcIndex(e.currentTarget.selectedIndex);
@@ -104,7 +144,7 @@ const Player = () => {
 													</>
 												})}
 											</select>
-											<button className={"btn btn-primary"} onClick={() => {
+											<button class={"btn btn-primary"} onClick={() => {
 												const blob = new Blob([lyrics()![lrcIndex()].lyrics], {type: "text/binary"});
 												const url = URL.createObjectURL(blob);
 												const a = document.createElement("a");
@@ -121,7 +161,7 @@ const Player = () => {
 									</Show>
 
 									<div style={{"scrollbar-width": "none"}}
-										 className="overflow-y-scroll grow text-center text-md max-h-[42rem] m-10 justify-center"
+										 class="overflow-y-scroll grow text-center text-md max-h-[42rem] m-10 justify-center"
 										 innerHTML={lyrics() ? lyrics()![lrcIndex()].lyrics.replaceAll(new RegExp("\\[[^\\[\\]]*]", "g"), "").trim().replaceAll("\n", "<br/>") : undefined}>
 
 									</div>
@@ -134,22 +174,131 @@ const Player = () => {
 
 					</Show>
 				</div>
-				<div className={"divider "}></div>
-				<a className={"btn w-full btn-primary"} href={baseUrl + params.play}>下载</a>
-				<div className={"flex mt-2"}>
-					<div className={"flex flex-col text-center gap-2"}>
-						<button className={"btn btn-success"} onClick={(e)=>{
-							setCurrentVote(currentVote()+1)
-							e.currentTarget.disabled = true;
-						}}><BiRegularUpArrow/></button>
+				<a class={"btn w-full btn-primary mt-2"} href={baseUrl + params.play}>下载</a>
+				<div class={"divider "}></div>
+
+				<div class={"flex mt-2 gap-4"}>
+					<div class={"flex flex-col text-center gap-2"}>
+						<button class={"btn "}
+								classList={{["btn-success"]: voted() === 1}}
+								onClick={(e) => {
+									if (localStorage.getItem("uuid")) {
+										if (voted() === -1) {
+											setCurrentVote(currentVote() + 2);
+											fetch(baseUrl + "api/community/upvote", {
+												method: "POST",
+												credentials: "include",
+												body: params.play as string,
+											})
+											setVoted(1)
+										} else if (voted() === 1) {
+											setCurrentVote(currentVote() - 1);
+											fetch(baseUrl + "api/community/reset-vote", {
+												method: "POST",
+												body: params.play as string,
+												credentials: "include"
+											})
+											setVoted(0)
+										} else {
+											setCurrentVote(currentVote() + 1)
+											fetch(baseUrl + "api/community/upvote", {
+												method: "POST",
+												credentials: "include",
+												body: params.play as string,
+											})
+											setVoted(1)
+										}
+
+									} else {
+										let a = document.createElement("a");
+										a.href = WebRoutes.instruNet + "/login";
+										a.click()
+									}
+
+								}}><BiRegularUpArrow/></button>
 						{currentVote()}
-						<button className={"btn btn-error"} onClick={(e)=>{
-							setCurrentVote(currentVote()-1)
-							e.currentTarget.disabled = true;
+						<button class={"btn"} classList={{["btn-error"]: voted() === -1}} onClick={(e) => {
+							if (localStorage.getItem("uuid")) {
+								if (voted() === -1) {
+									setCurrentVote(currentVote() + 1);
+									fetch(baseUrl + "api/community/reset-vote", {
+										method: "POST",
+										body: params.play as string,
+										credentials: "include"
+									})
+									setVoted(0)
+								} else if (voted() === 1) {
+									setCurrentVote(currentVote() - 2);
+									fetch(baseUrl + "api/community/downvote", {
+										method: "POST",
+										body: params.play as string,
+										credentials: "include"
+									})
+									setVoted(-1)
+								} else {
+									setCurrentVote(currentVote() - 1)
+									fetch(baseUrl + "api/community/downvote", {
+										method: "POST",
+										body: params.play as string,
+										credentials: "include"
+									})
+									setVoted(-1)
+								}
+							}
+
 						}}><BiRegularDownArrow/></button>
 					</div>
-					<div className={"grow"}>
+					<div class={"grow"}>
+						<div class={"flex gap-2"}>
+							<input onKeyDown={(e)=>{
+								if(e.key === "Enter") {
+									document.getElementById("send-comment")?.click()
+								}
+							}} class={"input grow"} onInput={(e)=>{
+								setCommentContent(e.target.value)
+							}} value={commentContent()} placeholder={"评论"}/>
+							<button id={"send-comment"} class={"btn btn-primary"} onClick={(e)=> {
+								fetch(baseUrl + "api/community/postComment", {
+									method: "POST",
+									credentials: "include",
+									headers: {
+										"Content-Type": "application/json",
+									}, body: JSON.stringify({
+										content: commentContent(), master: params.play
+									})
+								}).then(res => {
+									fetch(baseUrl + "userapi?getname=true&uuid="+localStorage.getItem('uuid'), {
+										method: "get",
+										credentials: "include",
 
+									}).then(res => res.text()).then(data => {
+										if (res.ok) {
+
+											setComments([{
+												content: commentContent(),
+												uuid: null!, date: null!, poster: null!, master: null!, posterUsername:data, dateTime: new Date(Date.now())
+											}, ...comments() ])
+											setCommentContent("")
+										}
+									})
+
+								})
+
+							}} disabled={!localStorage.getItem("uuid")}>{localStorage.getItem("uuid") ? "发送" : "请登录"}</button>
+						</div>
+
+						<div class={"divider "}></div>
+
+						{comments().map((item, index) => {
+							return <>
+								<div>
+									{item.posterUsername} @ {item.dateTime?.toLocaleString()}: {item.content}
+								</div>
+								<div class={"divider "}></div>
+
+
+							</>
+						})}
 					</div>
 				</div>
 			</div>
