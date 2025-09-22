@@ -11,13 +11,13 @@ interface PlayInfoInterface {
 	kind: number
 }
 
-const PlayerComponent = ({url, PlayInfo, onFinished, onNextPressed, onPreviousPressed, index}: {
+const PlayerComponent = ({url, PlayInfo, onFinished, onNextPressed, onPreviousPressed, index, autoplay}: {
 	url: Accessor<string>,
 	PlayInfo: Accessor<PlayInfoInterface | null | undefined>,
 	onFinished?: JSX.EventHandlerUnion<HTMLAudioElement, Event, JSX.EventHandler<HTMLAudioElement, Event>> | undefined,
 	onNextPressed?: JSX.EventHandlerUnion<HTMLButtonElement, MouseEvent, JSX.EventHandler<HTMLButtonElement, MouseEvent>> | undefined,
 	onPreviousPressed?: JSX.EventHandlerUnion<HTMLButtonElement, MouseEvent, JSX.EventHandler<HTMLButtonElement, MouseEvent>> | undefined,
-	index?: Accessor<number>
+	index?: Accessor<number>, autoplay?: boolean
 }) => {
 	interface PlayingInfo {
 		timeFull?: number,
@@ -51,7 +51,7 @@ const PlayerComponent = ({url, PlayInfo, onFinished, onNextPressed, onPreviousPr
 		<div class={"card shadow-xl bg-base-100 w-full"}>
 			<div class={"card-body w-full"}>
 
-				<audio autoplay={true} src={url()} ref={audioElementRef} onLoadedData={(e) => {
+				<audio autoplay={autoplay} src={url()} ref={audioElementRef} onLoadedData={(e) => {
 					setPlayingInfo({
 						...playingInfo(),
 						timeFull: e.currentTarget.duration,

@@ -1,15 +1,16 @@
 import { createEffect, createSignal, For, Show } from "solid-js";
-import { baseUrl, Kind, WebRoutes } from "../Singletons";
+import {baseUrl, immutableRemoveAt, Kind, WebRoutes} from "../Singletons";
 import style from "./Home.module.css";
-import { BiRegularCross, BiSolidDownArrow, BiSolidLeftArrow, BiSolidRightArrow } from "solid-icons/bi";
+import {BiRegularCross, BiRegularImageAdd, BiSolidDownArrow, BiSolidLeftArrow, BiSolidRightArrow} from "solid-icons/bi";
 import { createMediaQuery } from "@solid-primitives/media";
-import { CgCross } from "solid-icons/cg";
+import {CgAdd, CgCross} from "solid-icons/cg";
 import { TbError404 } from "solid-icons/tb";
 import { FaSolidCross } from "solid-icons/fa";
 import { FiDelete } from "solid-icons/fi";
 import { TiDelete, TiUserDelete } from "solid-icons/ti";
 import { RiSystemDeleteBackFill } from "solid-icons/ri";
-import { AiOutlineDelete } from "solid-icons/ai";
+import {AiOutlineDelete, AiTwotoneFileAdd} from "solid-icons/ai";
+import {SiGodaddy} from "solid-icons/si";
 const Home = () => {
 	interface UserInfo {
 		uuid: string, username: string, email: string
@@ -126,7 +127,20 @@ const Home = () => {
 									<td>{item.album_name}</td>
 									<td>{item.artist}</td>
 									<td>{Kind[item.kind]}</td>
-									<td><button class="btn btn-sm  sm:btn-md bg-red-500">{small() ? <AiOutlineDelete/> :"删除" }</button></td>
+									<td><button class="btn btn-sm  sm:btn-md bg-red-500" onClick={(e)=>{
+										// Hilarious.
+										if(e.target.innerHTML !=="确定？") {
+											e.target.innerHTML = "确定？";
+										}else {
+											fetch(baseUrl+"delSong?uuid=" + item.uuid, {
+												credentials: "include"
+											}).then(res=>{
+												if(res.ok){
+													setUploadedSong(immutableRemoveAt(uploadedSong()!, index, 1))
+												}
+											})
+										}
+									}}>{small() ? <AiOutlineDelete/> :"删除" }</button></td>
 								</tr>
 							}) : null}
 						</Show>
@@ -135,18 +149,34 @@ const Home = () => {
 				</table>
 			</div>
 
-			<div class="flex bg-base-200 rounded-xl p-5 h-35">
+			<div class="flex bg-base-200 rounded-xl p-5 h-35 gap-3">
 				<For each={uploadedPlaylist()}>
 					{item => {
 						return <>
 							<a href={WebRoutes.instruNet + "/playlist/"+item.uuid}>
-								<img src={baseUrl + "playlist-tmb?asFile=true&playlistuuid=" + item.uuid} class=" w-20 h-20 border-2" />
+								<img src={baseUrl + "playlist-tmb?asFile=true&playlistuuid=" + item.uuid} class=" h-20 border-1" />
 								<div class="text-sm text-center mt-2">{item.title}</div>
 							</a>
 
 						</>
 					}}
 				</For>
+				<div onClick={()=>{
+					fetch(baseUrl + "create-playlist", {
+						method: "GET", credentials: "include",
+					}).then(res=>{
+						if(res.ok){
+							res.text().then(text => {
+								let a =  document.createElement("a");
+								a.href = WebRoutes.instruNet + "/playlist/" + text;
+								a.click()
+							})
+						}
+
+					})
+				}}>
+					<div class={"h-20 w-20 p-0 m-0 flex text-xl flex-col text-center justify-center border-1 select-none"}>+</div>
+				</div>
 			</div>
 
 
