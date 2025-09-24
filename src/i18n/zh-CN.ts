@@ -38,6 +38,9 @@ const General = {
 	PASSWORD: "密码",
 	INFO_LOGIN_ERROR: "登录失败，请检查用户名和密码是否正确。",
 	INFO_LOGIN_SUCCESS: "登录成功，正在跳转……",
+	INFO_REG_SUCCESS:"注册成功，正在跳转……",
+	INFO_REG_ERROR: "因未知因素，注册失败。",
+	OPTIONAL: "可选"
 }
 
 export const ZHCN: Ii18n = {

@@ -16,7 +16,7 @@ const i18n: Ii18n = (await (async () => {
 
 // const baseUrl = "https://andyxie.cn:8200/";
 // const baseUrl = "http://localhost:5052/";
-const baseUrl = "http://localhost:5298/"; 
+const baseUrl = "http://localhost:5298/";
 
 const Kind: string[] = [
 	"去和声伴奏",

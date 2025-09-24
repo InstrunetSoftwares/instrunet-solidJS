@@ -78,8 +78,6 @@ const Playlist = () => {
 	})
 
 
-
-
 	function ParamHook() {
 		setSearchParams({
 			track: playCurrentIndex()
@@ -235,13 +233,14 @@ const Playlist = () => {
 		<div class="mx-auto lg:max-w-250 max-w-100 mb-10   mt-10">
 			<div class="grid grid-cols-1 lg:max-h-190 max-h-full lg:grid-cols-2 gap-2">
 				<div class="flex flex-col justify-center">
-					<div  class={"lg:w-100 lg:h-100 w-50 h-50 border-1 mx-auto mt-2 bg-no-repeat bg-contain bg-center"} style={{"background-image": `url('${baseUrl + "playlist-tmb?asFile=true&playlistuuid=" + params.playlistuuid}')`}}
+					<div class={"lg:w-100 lg:h-100 w-50 h-50 border-1 mx-auto mt-2 bg-no-repeat bg-contain bg-center"}
+						 style={{"background-image": `url('${baseUrl + "playlist-tmb?asFile=true&playlistuuid=" + params.playlistuuid}')`}}
 						 onClick={(e) => {
 							 if (playlistInfo()?.owner === localStorage.getItem("uuid")) {
 								 let anInput = document.createElement("input");
 								 anInput.type = "file";
 								 anInput.accept = "image/*"
-								 anInput.oninput = () => {
+								 anInput.onchange = () => {
 									 console.log(playlistInfo())
 									 if (anInput.files && anInput.files[0]) {
 										 const reader = new FileReader();
@@ -317,6 +316,28 @@ const Playlist = () => {
 
 				</div>
 				<div class="max-h-full lg:max-h-170 lg:overflow-y-scroll">
+					<button class={"btn btn-error w-full mb-3"} onClick={(e) => {
+						if (e.currentTarget.innerText === "确定？") {
+							fetch(baseUrl + "remove-playlist", {
+								method: "POST",
+								credentials: "include",
+								headers: {
+									"Content-Type": "application/json"
+								},
+								body: JSON.stringify({
+									playlistuuid: params.playlistuuid,
+								})
+							}).then(res => {
+									if (res.ok) {
+										window.history.back();
+									}
+								}
+							)
+						}else {
+							e.currentTarget.innerText = "确定？"
+							}
+					}}>删除
+					</button>
 					<table class="table  table-sm w-full border-2 border-base-content/10">
 						<thead>
 						<tr>
@@ -338,7 +359,10 @@ const Playlist = () => {
 									<td class={"lg:table-cell hidden"} onClick={() => {
 										setPlayCurrentIndex(index)
 									}}>{playlistInfo()?.content[index] ?
-										<div class="lg:w-15 lg:h-15 w-10 h-10 border-1 bg-center bg-contain" style={{"background-image": `url('${baseUrl + "getAlbumCover?id=" + playlistInfo()?.content[index]}')`, "background-repeat": "no-repeat"}}>
+										<div class="lg:w-15 lg:h-15 w-10 h-10 border-1 bg-center bg-contain" style={{
+											"background-image": `url('${baseUrl + "getAlbumCover?id=" + playlistInfo()?.content[index]}')`,
+											"background-repeat": "no-repeat"
+										}}>
 										</div> : null} </td>
 									<td onClick={() => {
 										setPlayCurrentIndex(index)

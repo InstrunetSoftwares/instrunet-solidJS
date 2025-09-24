@@ -82,7 +82,7 @@ const Home = () => {
 		<div class="md:w-150 gap-5 flex flex-col max-w-[100vw] mt-20 lg:w-250  mx-auto">
 			<div class="flex sm:mx-0 mx-5" >
 				{
-				 userInfo() ? <img class="w-20 inline rounded-xl" src={baseUrl + "avatar?uuid=" + userInfo()?.uuid} /> : null
+				 userInfo() ? <img id={"avatar"} class="w-20 inline rounded-xl" src={baseUrl + "avatar?uuid=" + userInfo()?.uuid} /> : null
 
 				}
 				<div class="flex flex-col justify-center ml-5">
@@ -96,7 +96,32 @@ const Home = () => {
 				<div class="grow"></div>
 				<div class="flex flex-col justify-center">
 					<div class="flex gap-2 sm:flex-row flex-col">
-						<button class="btn">更改头像</button><a class="btn" href={WebRoutes.instruNet + "/logout"} >登出</a>
+						<button class="btn" on:click={(e)=>{
+							const input = document.createElement("input");
+							input.onchange = (e) => {
+								console.log(input.files);
+								if(!input.files || !input.files[0]) {
+									return;
+								}
+								const reader = new FileReader();
+								reader.onloadend = (event) => {
+									fetch(baseUrl + "uploadavatar", {
+										method: "POST",
+										credentials: "include",
+										body: reader.result
+									}).then(res=>{
+										if(res.ok) {
+											(document.getElementById("avatar") as HTMLImageElement).src = reader.result as string;
+										}
+									})
+								}
+								reader.readAsDataURL(input.files[0]);
+							}
+							input.type = "file";
+							input.accept = "image/*";
+							input.click();
+
+						}}>更改头像</button><a class="btn" href={WebRoutes.instruNet + "/logout"} >登出</a>
 					</div>
 				</div>
 			</div>

@@ -8,6 +8,9 @@ type Ii18n = {
 		PASSWORD: string,
 		INFO_LOGIN_ERROR: string,
 		INFO_LOGIN_SUCCESS: string,
+		INFO_REG_SUCCESS: string,
+		INFO_REG_ERROR: string,
+		OPTIONAL:string
 	}
 }
 export default Ii18n;

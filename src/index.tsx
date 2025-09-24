@@ -25,6 +25,8 @@ const InstrunetPlayer = lazy(() => import("./Instrunet/Player"))
 const InstrunetHome = lazy(() => import("./Instrunet/Home"))
 const InstrunetLogout = lazy(()=> import ("./Instrunet/Logout"))
 const InstrunetPlaylist = lazy(()=>import("./Instrunet/Playlist"))
+const UnlockMusic = lazy(()=>import("./UnlockMusic"))
+const Register = lazy(()=>import("./Instrunet/Register"));
 render(() => {
 	const SharedButtons = <BunchOfButtons />;
 	const GlobalNavBar = <NavBar Buttons={SharedButtons} />
@@ -63,6 +65,7 @@ render(() => {
 
 				</Route>
 				<Route path={"/logout"} component={InstrunetLogout}/>
+				<Route path={"/register"} component={Register}/>
 				<Route path={"/home"} component={() => <>
 					<Wrapper Content={InstrunetHome} />
 				</>} />
@@ -75,6 +78,8 @@ render(() => {
 				<Route path={"/playlist/:playlistuuid"} component={()=><Wrapper Content={InstrunetPlaylist}/>}/>
 			</>
 		})()} />
+		<Route path={"/unlock-music"} component={UnlockMusic}/>
+
 
 
 	</Router>
