@@ -17,17 +17,20 @@ const InstrunetIndex: Component = () => {
 			});
 			return;
 		}
-		if (!form().file) {
+		
+		const formData = new FormData(); 
+		for (let kV  of Object.entries(form())){
+			formData.append(kV[0], kV[1])
+			
+		}
+		if (!((document.getElementById("file-input") as HTMLInputElement).files) || !(document.getElementById("file-input") as HTMLInputElement).files![0]) {
 			setUploadError({
 				message: "非法文件。"
 			})
 			return;
 		}
-		const formData = new FormData(); 
-		for (let kV  of Object.entries(form())){
-			formData.append(kV[0], kV[1])
-		}
-
+		formData.append("fileBinary", (document.getElementById("file-input") as HTMLInputElement).files![0])
+		console.log(formData.get("fileBinary"))
 		fetch(baseUrl + "submit", {
 			method: "POST",
 			credentials: "include",
@@ -56,7 +59,7 @@ const InstrunetIndex: Component = () => {
 		albumName: string | null,
 		artist: string | null,
 		link: string | null,
-		file: File | null,
+		
 		email: string | null,
 		kind: number[]
 
@@ -72,7 +75,7 @@ const InstrunetIndex: Component = () => {
 		albumName: null,
 		artist: null,
 		link: null,
-		file: null,
+		
 		email: null,
 		kind: [0]
 	})
@@ -160,7 +163,7 @@ const InstrunetIndex: Component = () => {
 
 					</div>
 					<div style={{padding: 0}} class={"sm:hero-content  gap-5 flex flex-col"}>
-						<input type={"file"} class={"file-input min-w-full"} onChange={async (e) => {
+						<input id="file-input" type={"file"} class={"file-input min-w-full"} onChange={async (e) => {
 							console.log((e.target.files![0]));
 							let parsedInfo = await parseBlob(e.target.files![0], {
 								skipCovers: false
@@ -213,9 +216,7 @@ const InstrunetIndex: Component = () => {
 								albumCoverRef?.classList.add("aspect-auto");
 							}
 							setUploading(true)
-							setForm({
-								...form(), file: e.target.files![0]
-							})
+							
 							setUploading(false); 
 
 
