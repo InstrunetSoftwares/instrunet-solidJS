@@ -23,19 +23,29 @@ const InstrunetIndex: Component = () => {
 			})
 			return;
 		}
+		const formData = new FormData(); 
+		for (let kV  of Object.entries(form())){
+			formData.append(kV[0], kV[1])
+		}
+
 		fetch(baseUrl + "submit", {
 			method: "POST",
-			headers: {"Content-Type": "application/json"},
 			credentials: "include",
-			body: JSON.stringify(form()),
+			body: formData,
 		}).then(res => {
 			if (res.ok) {
 				setUploadDone("上传完成，请迈步“队列”页面")
-			} else {
+			} else if (res.status === 500){
+				setUploadError({
+					message: "已在数据库中或队列中存在"
+				})
+
+			}else {
 				setUploadError({
 					message: `HTTP Error: ${res.status} ${res.statusText}`
 				})
 			}
+				
 		})
 
 	}
@@ -46,7 +56,7 @@ const InstrunetIndex: Component = () => {
 		albumName: string | null,
 		artist: string | null,
 		link: string | null,
-		file: string,
+		file: File | null,
 		email: string | null,
 		kind: number[]
 
@@ -62,7 +72,7 @@ const InstrunetIndex: Component = () => {
 		albumName: null,
 		artist: null,
 		link: null,
-		file: "",
+		file: null,
 		email: null,
 		kind: [0]
 	})
@@ -184,6 +194,7 @@ const InstrunetIndex: Component = () => {
 								if (parsedInfo.common.picture[0]) {
 									let pic = new Blob([parsedInfo.common.picture[0].data as BlobPart], {type: "image/png"});
 									const reader = new FileReader();
+									
 									reader.readAsDataURL(pic);
 									reader.onloadend = () => {
 										setForm({
@@ -202,14 +213,10 @@ const InstrunetIndex: Component = () => {
 								albumCoverRef?.classList.add("aspect-auto");
 							}
 							setUploading(true)
-							const reader = new FileReader();
-							reader.readAsDataURL(e.target.files![0]);
-							reader.onloadend = () => {
-								setForm({
-									...form(), file: reader.result!.toString()
-								})
-								setUploading(false)
-							}
+							setForm({
+								...form(), file: e.target.files![0]
+							})
+							setUploading(false); 
 
 
 						}}/>

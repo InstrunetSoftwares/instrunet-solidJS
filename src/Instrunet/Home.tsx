@@ -59,20 +59,20 @@ const Home = () => {
 
 	fetch(baseUrl + "getUploaded", {
 		credentials: "include"
-	}).then((res) => {
+	}).then(async (res) => {
 		if (res.ok) {
-			res.json().then((json) => {
+			let json = await res.json()
 
 				for (const received of json as UploadedSongReceivePayload[]) {
-					fetch(baseUrl + "getSingle?id=" + received.uuid).then((res) => {
-						res.json().then(json => {
+					let res = await fetch(baseUrl + "getSingle?id=" + received.uuid)
+					let json = await res.json(); 
 							json.uuid = received.uuid;
 							setUploadedSong([...uploadedSong() ? uploadedSong()! : [], json])
-						})
-					})
-				}
+						
+					
+				
 
-			})
+			}
 		} else {
 			setUploadedSong(null);
 		}

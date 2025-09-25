@@ -9,7 +9,7 @@ const QueuePage: Component = () => {
 		artist: string,
 		albumName: string,
 		kind: number,
-		dataTimeUploaded: string
+		dateTimeUploaded: string
 	}
 
 	const [queueInfo, setQueueInfo] = createSignal<Queue[]>([])
@@ -50,7 +50,7 @@ const QueuePage: Component = () => {
 								{Kind[item.kind]}
 							</td>
 							<td>
-								{item.dataTimeUploaded}
+								{item.dateTimeUploaded}
 							</td>
 						</tr>
 					</>) : <tr class={"bg-base-200"}><td colspan={5} class={"text-center"}><span class={"loading loading-spinner loading-md"}></span></td></tr>
