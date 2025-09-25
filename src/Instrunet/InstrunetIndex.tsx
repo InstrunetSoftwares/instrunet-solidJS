@@ -298,7 +298,9 @@ const InstrunetIndex: Component = () => {
 								method: "POST",
 								headers: {"Content-Type": "application/json"},
 								credentials: "include",
-								body: JSON.stringify(ncmForm()),
+								body: JSON.stringify({
+									...ncmForm(), id: Number.parseInt(ncmForm().id)
+								}),
 							}).then(res => {
 								if (res.ok) {
 									setUploadDone("上传完成，请迈步“队列”页面")
