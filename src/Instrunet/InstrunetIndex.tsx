@@ -17,20 +17,17 @@ const InstrunetIndex: Component = () => {
 			});
 			return;
 		}
-		
-		const formData = new FormData(); 
-		for (let kV  of Object.entries(form())){
-			formData.append(kV[0], kV[1])
-			
-		}
-		if (!((document.getElementById("file-input") as HTMLInputElement).files) || !(document.getElementById("file-input") as HTMLInputElement).files![0]) {
+		if (!form().file) {
 			setUploadError({
 				message: "非法文件。"
 			})
 			return;
 		}
-		formData.append("fileBinary", (document.getElementById("file-input") as HTMLInputElement).files![0])
-		console.log(formData.get("fileBinary"))
+		const formData = new FormData(); 
+		for (let kV  of Object.entries(form())){
+			formData.append(kV[0], kV[1])
+			
+		}
 		fetch(baseUrl + "submit", {
 			method: "POST",
 			credentials: "include",
@@ -54,12 +51,12 @@ const InstrunetIndex: Component = () => {
 	}
 
 	interface Form {
-		albumCover: string | null,
+		albumCover: Blob | null,
 		name: string | null,
 		albumName: string | null,
 		artist: string | null,
 		link: string | null,
-		
+		file: Blob | null, 
 		email: string | null,
 		kind: number[]
 
@@ -75,7 +72,7 @@ const InstrunetIndex: Component = () => {
 		albumName: null,
 		artist: null,
 		link: null,
-		
+		file: null, 
 		email: null,
 		kind: [0]
 	})
@@ -128,7 +125,7 @@ const InstrunetIndex: Component = () => {
 
 			{/* Below Part */}
 			<div class={"divider mt-[45vh] mb-10"}></div>
-			<div class={"flex mx-auto flex-col sm:max-w-6/12"}>
+			<div class={"flex mx-auto flex-col sm:max-w-8/12 md:max-w-6/12"}>
 				{
 					uploadError() ? <div class={"alert alert-error mb-5"} role={"alert"}>
 						<svg xmlns="http://www.w3.org/2000/svg"
@@ -155,9 +152,9 @@ const InstrunetIndex: Component = () => {
 				<div class="tabs tabs-box mt-5">
 					<input type="radio" name="tab_upload_type" class="tab" aria-label="文件上传" defaultChecked={true}></input>
 					<div class="tab-content border-base-300 p-6">
-						<div class={"grid grid-cols-1  md:grid-cols-2 gap-5 "}>
+						<div class={"grid grid-cols-1  lg:grid-cols-2 gap-5 "}>
 					<div class={"flex "} style={{"align-items": 'center'}}>
-						<img ref={albumCoverRef} src={form().albumCover ?? ""}
+						<img ref={albumCoverRef} src={form().albumCover ?  URL.createObjectURL(form().albumCover!) : "" }
 							 class={" bg-contain grow bg-no-repeat min-h-0 aspect-square max-w-1/2 sm:max-w-full border-1"}
 							 classList={{["bg-base-100"]: true}}></img>
 
@@ -197,15 +194,10 @@ const InstrunetIndex: Component = () => {
 								if (parsedInfo.common.picture[0]) {
 									let pic = new Blob([parsedInfo.common.picture[0].data as BlobPart], {type: "image/png"});
 									const reader = new FileReader();
-									
-									reader.readAsDataURL(pic);
-									reader.onloadend = () => {
 										setForm({
-											...form(), albumCover: reader.result!.toString()
+											...form(), albumCover: pic
 										})
-										albumCoverRef?.classList.remove("aspect-square");
-										albumCoverRef?.classList.add("aspect-auto");
-									}
+										
 
 								}
 							} else {
@@ -216,7 +208,9 @@ const InstrunetIndex: Component = () => {
 								albumCoverRef?.classList.add("aspect-auto");
 							}
 							setUploading(true)
-							
+							setForm({
+								...form(), file: e.target.files ? e.target.files[0] : null
+							})
 							setUploading(false); 
 
 
