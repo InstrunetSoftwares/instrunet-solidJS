@@ -1,6 +1,7 @@
-import {baseUrl} from "./Singletons";
+import {baseUrl, dataURLtoBlob} from "./Singletons";
 
 const UnlockMusic = ()=>{
+	document.title = "音乐解锁 | 伴奏网"
 	return <>
 		<div class={"md:max-w-250 mt-10 mx-auto max-w-full"}>
 			<h1 class={"text-7xl"}>音乐解锁</h1>
@@ -24,13 +25,22 @@ const UnlockMusic = ()=>{
 							"Content-Type": "application/json",
 						},
 						body: JSON.stringify({
-							fileInDataUrl : fileReader.result,
+							fileInDataUri : fileReader.result,
 							fileName: e.target.files![0].name
 						})
 					}).then(res => {
 						if(res.ok){
 							statusReport.innerText = "成功"
 							e.target.disabled = false;
+							res.json().then(j=>{
+								let url = URL.createObjectURL(dataURLtoBlob(j.data)); 
+								let anchor = document.createElement("a");
+								anchor.classList.add("hidden");  
+								anchor.href = url; 
+								anchor.download = j.fileName; 
+								document.body.appendChild(anchor); 
+								anchor.click(); 
+							})
 						}else{
 							res.text().then(data => {
 								statusReport.innerText = "失败：" + data

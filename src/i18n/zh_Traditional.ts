@@ -1,6 +1,6 @@
 ﻿import Ii18n from "./Ii18n";
 
-const Instrunet  = {
+const Instrunet = {
     TITLE: "伴奏網",
     DESC: "AI支持的，免費的伴奏分享網站",
     ALL: "全部",
@@ -13,7 +13,7 @@ const Instrunet  = {
 
 
 }
-const STT  = {
+const STT = {
     TITLE: "語音轉文字工具",
     DESC: "“不大可用”於歌詞類“帶有旋律”的語音音頻。"
 }
@@ -38,6 +38,10 @@ const General = {
     PASSWORD: "密碼",
     INFO_LOGIN_ERROR: "登錄失敗，請檢查用戶名和密碼是否正確。",
     INFO_LOGIN_SUCCESS: "登錄成功，正在跳轉……",
+    INFO_REG_SUCCESS: "注冊成功，正在重定向……",
+    INFO_REG_ERROR: "因不明原因，注冊失敗。",
+    OPTIONAL: "可選"
+
 }
 
 export const ZHT: Ii18n = {

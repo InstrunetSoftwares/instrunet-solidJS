@@ -57,18 +57,28 @@ render(() => {
 		<Route path={"/instrunet"} children={(() => {
 			return <>
 				<Route path="/" component={() => {
+					document.title = "伴奏网 | InstruNet"
 					return <Wrapper Content={InstrunetIndex} />
 				}}></Route>
-				<Route path={"/queue"} component={() => <Wrapper Content={InstrunetQueuePage} />}>
+				<Route path={"/queue"} component={() => {
+					document.title = "队列 | 伴奏网"
+					return <Wrapper Content={InstrunetQueuePage} />}}>
 				</Route>
-				<Route path={"/login"} component={InstrunetLogin}>
+				<Route path={"/login"} component={(()=>{
+					return InstrunetLogin})()}>
 
 				</Route>
-				<Route path={"/logout"} component={InstrunetLogout}/>
-				<Route path={"/register"} component={Register}/>
-				<Route path={"/home"} component={() => <>
+				<Route path={"/logout"} component={(()=>{
+					document.title = "正在登出 | 伴奏网"
+					return InstrunetLogout})()}/>
+				<Route path={"/register"} component={(()=>{
+					
+					return Register})()}/>
+				<Route path={"/home"} component={() => {
+					document.title = "个人主页 | 伴奏网"
+					return <>
 					<Wrapper Content={InstrunetHome} />
-				</>} />
+				</>}} />
 				<Route path={"/search"} component={() => <>
 					<Wrapper Content={InstrunetSearch} />
 				</>}></Route>

@@ -1,7 +1,7 @@
 import {CgPlayPause, CgPlayButton} from "solid-icons/cg";
 import {TiMediaRewind, TiMediaFastForward} from "solid-icons/ti";
 import {createSignal, Accessor, JSX, createEffect} from "solid-js";
-import {Kind} from "../../Singletons";
+import {baseUrl, Kind} from "../../Singletons";
 import {AiFillStepBackward, AiFillStepForward} from "solid-icons/ai";
 
 interface PlayInfoInterface {
@@ -41,6 +41,22 @@ const PlayerComponent = ({url, PlayInfo, onFinished, onNextPressed, onPreviousPr
 				return {
 					...prev, loading: true
 				}
+			})
+		}
+	})
+	createEffect(()=>{
+		if(navigator.mediaSession){
+			navigator.mediaSession.metadata = new MediaMetadata({
+				title: PlayInfo()?.song_name, 
+				artist: PlayInfo()?.artist, 
+				album: PlayInfo()?.album_name, 
+				artwork: [
+					{
+						src: baseUrl + "getalbumcover?id="+url().replace(baseUrl, ""), 
+						sizes: "1000x1000", 
+						type: "image/webp"
+					}
+				]
 			})
 		}
 	})

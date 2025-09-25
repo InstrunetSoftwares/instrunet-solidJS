@@ -26,7 +26,7 @@ const Home = () => {
 	}
 
 	const [userInfo, setUserInfo] = createSignal<UserInfo>();
-	const [uploadedSong, setUploadedSong] = createSignal<UploadedSong[] | undefined | null>(undefined);
+	const [uploadedSong, setUploadedSong] = createSignal<UploadedSong[] | undefined | null>([]);
 	const [uploadedCollapsed, setUploadedCollapsed] = createSignal<boolean>(localStorage.getItem("uploadedCollapsed") ? localStorage.getItem("uploadedCollapsed") === "true" : false);
 	const [uploadedPlaylist, setUploadedPlaylist] = createSignal<Playlist[] | null | undefined>(undefined);
 	const small = createMediaQuery("(max-width: 40rem)")

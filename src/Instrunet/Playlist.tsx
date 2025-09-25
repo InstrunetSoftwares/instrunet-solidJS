@@ -41,6 +41,7 @@ const Playlist = () => {
 	const [playCurrentIndex, setPlayCurrentIndex] = createSignal<number>(0);
 	const [playUrl, setPlayUrl] = createSignal<string>("");
 	const [popOpened, setPopOpened] = createSignal<boolean>(false);
+	document.title = "播放队列：" + playlistInfo()?.title + " | 伴奏网"
 	fetch(baseUrl + "playlist?playlistUuid=" + params.playlistuuid).then(res => {
 		if (res.ok) {
 			res.json().then(async (j) => {

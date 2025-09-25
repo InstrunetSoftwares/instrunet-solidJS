@@ -15,7 +15,7 @@ interface PlayInfo {
 
 
 const Player = () => {
-
+	document.title = "特别的人 | 伴奏网"
 	interface LyricObject {
 		album: string,
 		artist: string,
@@ -38,6 +38,7 @@ const Player = () => {
 	const [voted, setVoted] = createSignal<number>(0);
 	const [comments, setComments] = createSignal<Comment[]>([]);
 	const [commentContent, setCommentContent] = createSignal<string>("");
+	const [pitch, setPitch] = createSignal<number>(0); 
 	createEffect(() => {
 		setPlayUrl(baseUrl + params.play)
 	})
@@ -174,7 +175,25 @@ const Player = () => {
 
 					</Show>
 				</div>
-				<a class={"btn w-full btn-primary mt-2"} href={baseUrl + params.play}>下载</a>
+				<div class="join w-full">
+					<a class={"btn grow join-item  btn-primary mt-2"} href={baseUrl + params.play}>下载</a>
+					<button class={"btn grow join-item  btn-primary mt-2"} popovertarget="pitched-download" style={{"anchor-name": "--pitched-anchor"} as any}>变调下载</button>
+					<ul class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm" popover={true} id="pitched-download" style={{"position-anchor": "--pitched-anchor"} as any}>
+												<li>
+													<div>
+														<input class="w-full range" id="pitch-range-input" type="range" max={12} min={-12} step={0.5} oninput={(e)=>{
+															setPitch(e.currentTarget.valueAsNumber)
+														}}></input>
+													<span id="indicator">{pitch()}</span>
+													</div>
+												</li>
+												<li>
+													<a class="btn btn-primary" href={`${baseUrl}${params.play}?pitch=${pitch()}`} onClick={(e)=>{
+														e.currentTarget.innerHTML = "<div class='loading loading-spinner'></div>"
+													}}>下载</a>
+												</li>
+					</ul>
+				</div>
 				<div class={"divider "}></div>
 
 				<div class={"flex mt-2 gap-4"}>

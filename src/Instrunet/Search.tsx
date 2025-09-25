@@ -6,7 +6,6 @@ import { Kind } from "../Singletons";
 
 const Search = () => {
 
-
 	const PER_PAGE_CONST = 50;
 
 	interface Searched {
@@ -24,6 +23,7 @@ const Search = () => {
 	const [currentPage, setCurrentPage] = createSignal<number>(1);
 	const [pageNumArr, setPageNumArr] = createSignal<number[]>([]);
 	const [hide, setHide] = createSignal(false);
+	document.title = "搜索："+(p ? p.p ? p.p as string : "全部" : "全部") + " | 伴奏网"
 
 	createEffect(() => {
 		setSearchInfo(null)
@@ -114,8 +114,8 @@ const Search = () => {
 							})
 						}
 					</div>
-					<div ref={refBottomBar!} class={`fixed px-2 glass overflow-scroll min-w-screen max-w-screen  py-4 bottom-0 ${style["bottom-nav"]}`}>
-						<div class={"mx-auto w-fit"}>
+					<div ref={refBottomBar!} class={`fixed px-2 glass overflow-y-auto min-w-screen max-w-screen  py-4 bottom-0 ${style["bottom-nav"]}`}>
+						<div class={"mx-auto pl-3 pr-3 w-fit"}>
 							<div class="join  mx-auto">
 								{
 									<For each={(() => {

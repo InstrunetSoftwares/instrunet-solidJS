@@ -3,6 +3,7 @@ import {baseUrl, i18n, WebRoutes} from "../Singletons";
 import {BiRegularLeftArrowAlt} from "solid-icons/bi";
 
 const Register = () => {
+	document.title = "注册 | 伴奏网"
 	enum PageStatus {
 		FIRST_LOAD, LOGGING, ERROR, SUCCESS
 	}

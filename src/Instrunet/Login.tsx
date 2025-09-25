@@ -3,6 +3,7 @@ import {BiRegularLeftArrowAlt} from "solid-icons/bi";
 import {createSignal} from "solid-js";
 
 const Login = () => {
+	document.title="登录 | 伴奏网"
 	enum PageStatus {
 		FIRST_LOAD, LOGGING, ERROR, SUCCESS
 	}
