@@ -131,6 +131,7 @@ const PlayerComponent = ({url, PlayInfo, onFinished, onNextPressed, onPreviousPr
 
 									   }
 								   }
+								   setLock(false)
 							   }}
 						/>
 
