@@ -77,6 +77,8 @@ const Home = () => {
 			setUploadedSong(null);
 		}
 	})
+						document.title = userInfo()?.username + "的个人主页 | 伴奏网"
+
 	return <>
 
 		<div class="md:w-150 gap-5 flex flex-col max-w-[100vw] mt-20 lg:w-250  mx-auto">

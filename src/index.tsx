@@ -57,11 +57,9 @@ render(() => {
 		<Route path={"/instrunet"} children={(() => {
 			return <>
 				<Route path="/" component={() => {
-					document.title = "伴奏网 | InstruNet"
 					return <Wrapper Content={InstrunetIndex} />
 				}}></Route>
 				<Route path={"/queue"} component={() => {
-					document.title = "队列 | 伴奏网"
 					return <Wrapper Content={InstrunetQueuePage} />}}>
 				</Route>
 				<Route path={"/login"} component={(()=>{
@@ -69,13 +67,11 @@ render(() => {
 
 				</Route>
 				<Route path={"/logout"} component={(()=>{
-					document.title = "正在登出 | 伴奏网"
 					return InstrunetLogout})()}/>
 				<Route path={"/register"} component={(()=>{
 					
 					return Register})()}/>
 				<Route path={"/home"} component={() => {
-					document.title = "个人主页 | 伴奏网"
 					return <>
 					<Wrapper Content={InstrunetHome} />
 				</>}} />

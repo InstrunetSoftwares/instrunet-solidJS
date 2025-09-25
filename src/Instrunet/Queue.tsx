@@ -2,6 +2,8 @@ import { Component, createSignal } from "solid-js";
 import { baseUrl, Kind } from "../Singletons";
 
 const QueuePage: Component = () => {
+						document.title = "队列 | 伴奏网"
+
 	interface Queue {
 		name: string,
 		artist: string,

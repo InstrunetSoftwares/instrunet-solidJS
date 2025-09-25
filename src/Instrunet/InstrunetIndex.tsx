@@ -5,6 +5,8 @@ import {parseBlob} from "music-metadata";
 import style from "./InstrumentIndex.module.css"
 
 const InstrunetIndex: Component = () => {
+						document.title = "伴奏网 | InstruNet"
+
 	function Upload() {
 		setUploadDone(null);
 		setUploadError(null);
