@@ -11,15 +11,15 @@ const InstrunetIndex: Component = () => {
 		setUploadDone(null);
 		setUploadError(null);
 		setUploading(true)
-		if (!form().name) {
+		if (!form().name || !form().name?.trim()) {
 			setUploadError({
-				message: "Name cannot be empty. "
+				message: "名称不可谓空。"
 			});
 			return;
 		}
 		if (!form().file) {
 			setUploadError({
-				message: "File invalid. "
+				message: "非法文件。"
 			})
 			return;
 		}
@@ -66,18 +66,24 @@ const InstrunetIndex: Component = () => {
 		email: null,
 		kind: [0]
 	})
+	interface NcmForm{
+		id: string, kind: number[], email: string
+	}
 	const [uploadError, setUploadError] = createSignal<UploadError | null>(null);
 	const [uploading, setUploading] = createSignal<boolean>(false);
 	const [uploadDone, setUploadDone] = createSignal<string | null>(null);
 	const [search, setSearch] = createSignal<string>("");
-	createEffect(() => {
-		console.log(form())
-	}, [form])
+	const [ncmForm, setNcmForm] = createSignal<NcmForm>({
+		id: "", kind: [0], email: ""
+	})
 	createEffect(() => {
 		if (uploadError()) {
 			setUploading(false)
 		}
 	}, [uploadError])
+	createEffect(()=>{
+		console.log(ncmForm())
+	})
 
 	let albumCoverRef: HTMLImageElement | undefined;
 	let blink: HTMLSpanElement | undefined;
@@ -133,7 +139,10 @@ const InstrunetIndex: Component = () => {
 				}
 
 				<h1 class={"text-5xl font-bold"}>上传</h1>
-				<div class={"grid grid-cols-1  md:grid-cols-2 gap-5 mt-5"}>
+				<div class="tabs tabs-box mt-5">
+					<input type="radio" name="tab_upload_type" class="tab" aria-label="文件上传" defaultChecked={true}></input>
+					<div class="tab-content border-base-300 p-6">
+						<div class={"grid grid-cols-1  md:grid-cols-2 gap-5 "}>
 					<div class={"flex "} style={{"align-items": 'center'}}>
 						<img ref={albumCoverRef} src={form().albumCover ?? ""}
 							 class={" bg-contain grow bg-no-repeat min-h-0 aspect-square max-w-1/2 sm:max-w-full border-1"}
@@ -249,6 +258,64 @@ const InstrunetIndex: Component = () => {
 				<button onClick={Upload} disabled={uploading() && !uploadDone()}
 						class={"btn btn-primary min-w-full mt-5"}>{uploading() && !uploadDone() ?
 					<span class={"loading loading-spinner loading-md"}></span> : "上传"}</button>
+					</div>
+					<input type="radio" name="tab_upload_type" class="tab" aria-label="网易云上传"></input>
+					<div class="tab-content border-base-300 p-6 ">
+						<div class="flex flex-col gap-5">
+						<input id="ncm_id" value={ncmForm().id ?? ""} oninput={(e)=>{
+							setNcmForm({
+								...ncmForm(), id: e.currentTarget.value
+							})
+						}} type="number" class=" input" placeholder="网易云ID"></input>
+						<input id="email" value={ncmForm().email ?? ""} oninput={(e)=>{
+							setNcmForm({
+								...ncmForm(), email: e.currentTarget.value
+							})
+						}} class="input" placeholder="邮箱"></input>
+						<select class={"select min-w-full"} value={ncmForm().kind[0]} onchange={(e)=>{
+							setNcmForm({
+								...ncmForm(), kind : [Number.parseInt(e.currentTarget.value)]
+							})
+						}}>
+							{
+								Kind.map((item, i) => {
+									return <option value={i}>{item}</option>
+								})
+							}
+						</select>
+						<button onClick={()=>{
+							setUploadDone(null);
+							setUploadError(null);
+							setUploading(true); 
+							if (!ncmForm().id) {
+								setUploadError({
+									message: "ID不可为空"
+								});
+								return;
+							}
+							
+							fetch(baseUrl + "ncm/url", {
+								method: "POST",
+								headers: {"Content-Type": "application/json"},
+								credentials: "include",
+								body: JSON.stringify(ncmForm()),
+							}).then(res => {
+								if (res.ok) {
+									setUploadDone("上传完成，请迈步“队列”页面")
+								} else {
+									setUploadError({
+										message: `HTTP Error: ${res.status} ${res.statusText}`
+									})
+								}
+							})
+						}} disabled={uploading() && !uploadDone()}
+						class={"btn btn-primary min-w-full mt-5"}>{uploading() && !uploadDone() ?
+					<span class={"loading loading-spinner loading-md"}></span> : "上传"}</button>
+						</div>
+						
+					</div>
+				</div>
+				
 			</div>
 		</div>
 
