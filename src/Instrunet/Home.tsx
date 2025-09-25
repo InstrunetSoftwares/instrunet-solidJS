@@ -77,7 +77,10 @@ const Home = () => {
 			setUploadedSong(null);
 		}
 	})
+	createEffect(()=>{
+
 						document.title = userInfo()?.username + "的个人主页 | 伴奏网"
+	})
 
 	return <>
 
