@@ -17,7 +17,7 @@ const InstrunetIndex: Component = () => {
 			});
 			return;
 		}
-		if (!form().file) {
+		if (!form().fileBinary) {
 			setUploadError({
 				message: "非法文件。"
 			})
@@ -56,7 +56,7 @@ const InstrunetIndex: Component = () => {
 		albumName: string | null,
 		artist: string | null,
 		link: string | null,
-		file: Blob | null, 
+		fileBinary: Blob | null, 
 		email: string | null,
 		kind: number[]
 
@@ -72,7 +72,7 @@ const InstrunetIndex: Component = () => {
 		albumName: null,
 		artist: null,
 		link: null,
-		file: null, 
+		fileBinary: null, 
 		email: null,
 		kind: [0]
 	})
@@ -209,7 +209,7 @@ const InstrunetIndex: Component = () => {
 							}
 							setUploading(true)
 							setForm({
-								...form(), file: e.target.files ? e.target.files[0] : null
+								...form(), fileBinary: e.target.files ? e.target.files[0] : null
 							})
 							setUploading(false); 
 
