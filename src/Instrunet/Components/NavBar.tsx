@@ -101,7 +101,7 @@ const BunchOfButtons = () => {
 		<NavBarButtonInSig href={"mailto:xiey0@qq.com"}>{i18n.Instrunet.CONTACT}</NavBarButtonInSig>
 		<NavBarButtonInSig href={"https://afdian.com/a/re_xiey0"}>{i18n.Instrunet.DONATE}</NavBarButtonInSig>
 		<NavBarButtonInSig href={"https://andyxie.cn:5000/"}>{i18n.Instrunet.FORUM}</NavBarButtonInSig>
-		<NavBarButtonInSig href={"https://github.com/AXCWG/instrunet-vite"}>{i18n.Instrunet.GIT}</NavBarButtonInSig>
+		<NavBarButtonInSig href={"https://github.com/InstrunetSoftwares"}>{i18n.Instrunet.GIT}</NavBarButtonInSig>
 		<NavBarButtonInSig href={WebRoutes.instruNet + "/secret"}>{i18n.Instrunet.SECRET}</NavBarButtonInSig></>
 }
 export { NavBar, NavBarButtonInSig, BunchOfButtons };
