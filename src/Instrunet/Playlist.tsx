@@ -1,11 +1,12 @@
 import {useParams, useSearchParams} from "@solidjs/router";
 import {createEffect, createSignal, JSX, Show} from "solid-js";
-import {baseUrl, immutableInsertBefore, immutableRemoveAt, Kind} from "../Singletons";
+import {baseUrl, i18n, immutableInsertBefore, immutableRemoveAt, Kind} from "../Singletons";
 import PlayerComponent from "./Components/PlayerComponent";
 import {AiOutlineDelete} from "solid-icons/ai";
 import {CgClose} from "solid-icons/cg";
 import {VsInsert} from "solid-icons/vs";
 import {BsSearch} from "solid-icons/bs";
+
 
 const Playlist = () => {
 	interface PlaylistInfo {
@@ -41,7 +42,7 @@ const Playlist = () => {
 	const [playCurrentIndex, setPlayCurrentIndex] = createSignal<number>(0);
 	const [playUrl, setPlayUrl] = createSignal<string>("");
 	const [popOpened, setPopOpened] = createSignal<boolean>(false);
-	document.title = "播放队列：" + playlistInfo()?.title + " | 伴奏网"
+
 	fetch(baseUrl + "playlist?playlistUuid=" + params.playlistuuid).then(res => {
 		if (res.ok) {
 			res.json().then(async (j) => {
@@ -77,7 +78,9 @@ const Playlist = () => {
 	createEffect(() => {
 		setPlayUrl(baseUrl + playlistInfo()?.content[playCurrentIndex()])
 	})
-
+	createEffect(()=>{
+		document.title = i18n.Instrunet.DOC_TITLE.START + playlistInfo()?.title + i18n.Instrunet.DOC_TITLE.END
+	})
 
 	function ParamHook() {
 		setSearchParams({
@@ -176,10 +179,10 @@ const Playlist = () => {
 					<table class="table max-w-full table-fixed wrap-anywhere">
 						<thead>
 						<tr>
-							<td>歌名</td>
-							<td>专辑</td>
-							<td>艺术家</td>
-							<td>种类</td>
+							<td>{i18n.Instrunet.SONG_NAME}</td>
+							<td>{i18n.Instrunet.ALBUM_NAME}</td>
+							<td>{i18n.Instrunet.ARTIST}</td>
+							<td>{i18n.Instrunet.KIND_SELF}</td>
 						</tr>
 						</thead>
 						<tbody>
@@ -213,7 +216,7 @@ const Playlist = () => {
 								<td>{item.song_name}</td>
 								<td>{item.album_name}</td>
 								<td>{item.artist}</td>
-								<td>{Kind[item.kind]}</td>
+								<td>{i18n.Instrunet.KIND[item.kind]}</td>
 
 							</tr>
 						})}
@@ -286,7 +289,7 @@ const Playlist = () => {
 					}
 
 					<div class="text-center">{playlistInfo()?.ownerName}</div>
-					<Show when={playlistInfo()} keyed={false} fallback={<>正在加载</>}>
+					<Show when={playlistInfo()} keyed={false} fallback={<>{i18n.General.LOADING}</>}>
 						<Show when={playlistSongInfo()} keyed={false}>
 							<PlayerComponent autoplay={true} onPreviousPressed={() => {
 								if (playCurrentIndex() === 0) {
@@ -318,7 +321,7 @@ const Playlist = () => {
 				</div>
 				<div class="max-h-full lg:max-h-170 lg:overflow-y-scroll">
 					<button class={"btn btn-error w-full mb-3"} onClick={(e) => {
-						if (e.currentTarget.innerText === "确定？") {
+						if (e.currentTarget.innerText === i18n.General.DEL_CONFIRM) {
 							fetch(baseUrl + "remove-playlist", {
 								method: "POST",
 								credentials: "include",
@@ -335,19 +338,19 @@ const Playlist = () => {
 								}
 							)
 						}else {
-							e.currentTarget.innerText = "确定？"
+							e.currentTarget.innerText = i18n.General.DEL_CONFIRM
 							}
-					}}>删除
+					}}>{i18n.General.DEL}
 					</button>
 					<table class="table  table-sm w-full border-2 border-base-content/10">
 						<thead>
 						<tr>
-							<td class={"lg:table-cell hidden"}>封面</td>
-							<td>歌曲</td>
-							<td>专辑</td>
-							<td>艺术家</td>
-							<td>种类</td>
-							{playlistInfo()?.owner === localStorage.getItem("uuid") ? <td>操作</td> : null}
+							<td class={"lg:table-cell hidden"}>{i18n.Instrunet.COVER}</td>
+							<td>{i18n.Instrunet.SONG_NAME}</td>
+							<td>{i18n.Instrunet.ALBUM_NAME}</td>
+							<td>{i18n.Instrunet.ARTIST}</td>
+							<td>{i18n.Instrunet.KIND_SELF}</td>
+							{playlistInfo()?.owner === localStorage.getItem("uuid") ? <td>{i18n.General.ACTION}</td> : null}
 
 						</tr>
 						</thead>
@@ -415,7 +418,7 @@ const Playlist = () => {
 															"Content-Type": "application/json"
 														}, body: JSON.stringify(playlistInfo())
 													})
-												}}>前</button> :
+												}}>{i18n.General.FRONT}</button> :
 												<button class={"btn btn-square"} onClick={(e) => {
 													setPlaylistInsertInfo({
 														...playlistInsertInfo(), a: index, inserting: true

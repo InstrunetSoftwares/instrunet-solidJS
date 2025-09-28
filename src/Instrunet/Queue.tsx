@@ -1,8 +1,8 @@
 import { Component, createSignal } from "solid-js";
-import { baseUrl, Kind } from "../Singletons";
+import {baseUrl, i18n, Kind} from "../Singletons";
 
 const QueuePage: Component = () => {
-						document.title = "队列 | 伴奏网"
+						document.title = i18n.Instrunet.QUEUE
 
 	interface Queue {
 		name: string,
@@ -26,16 +26,16 @@ const QueuePage: Component = () => {
 		<table class={"table-xs sm:min-w-150 border border-base-content/10"}>
 			<thead>
 				<tr>
-					<th class="text-sm font-extralight">Song name</th>
-					<th class="text-sm font-extralight">Artist</th>
-					<th class="text-sm font-extralight">Album name</th>
-					<th class="text-sm font-extralight">Kind</th>
-					<th class="text-sm font-extralight">Upload time</th>
+					<th class="text-sm font-extralight">{i18n.Instrunet.SONG_NAME}</th>
+					<th class="text-sm font-extralight">{i18n.Instrunet.ARTIST}</th>
+					<th class="text-sm font-extralight">{i18n.Instrunet.ALBUM_NAME}</th>
+					<th class="text-sm font-extralight">{i18n.Instrunet.KIND_SELF}</th>
+					<th class="text-sm font-extralight">{i18n.General.UPLOAD_TIME}</th>
 				</tr>
 			</thead>
 			<tbody>
 				{
-					doneLoading() ? queueInfo().length === 0 ? <tr class={"bg-base-200"}><td colspan={5} class={"text-center"}>空</td></tr> : queueInfo().map((item, index) => <>
+					doneLoading() ? queueInfo().length === 0 ? <tr class={"bg-base-200"}><td colspan={5} class={"text-center"}>{i18n.General.EMPTY}</td></tr> : queueInfo().map((item, index) => <>
 						<tr class={index === 0 ? "bg-base-200" : ""}>
 							<td>
 								{item.name}
@@ -47,7 +47,7 @@ const QueuePage: Component = () => {
 								{item.albumName}
 							</td>
 							<td>
-								{Kind[item.kind]}
+								{i18n.Instrunet.KIND[item.kind]}
 							</td>
 							<td>
 								{item.dateTimeUploaded}

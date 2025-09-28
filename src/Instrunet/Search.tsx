@@ -1,5 +1,5 @@
 import { createEffect, createSignal, For } from "solid-js";
-import { baseUrl, WebRoutes, white } from "../Singletons";
+import {baseUrl, i18n, WebRoutes, white} from "../Singletons";
 import style from "../PageNavigator.module.css"
 import { useSearchParams } from "@solidjs/router";
 import { Kind } from "../Singletons";
@@ -23,7 +23,7 @@ const Search = () => {
 	const [currentPage, setCurrentPage] = createSignal<number>(1);
 	const [pageNumArr, setPageNumArr] = createSignal<number[]>([]);
 	const [hide, setHide] = createSignal(false);
-	document.title = "搜索："+(p ? p.p ? p.p as string : "全部" : "全部") + " | 伴奏网"
+	document.title = i18n.Instrunet.SEARCH_TITLE.START+(p ? p.p ? p.p as string : i18n.Instrunet.SEARCH_TITLE.ZENBU : i18n.Instrunet.SEARCH_TITLE.ZENBU) + i18n.Instrunet.SEARCH_TITLE.END
 
 	createEffect(() => {
 		setSearchInfo(null)

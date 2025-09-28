@@ -1,6 +1,6 @@
 import {useSearchParams} from "@solidjs/router";
 import {createEffect, createSignal, Show} from "solid-js";
-import {baseUrl, WebRoutes} from "../Singletons";
+import {baseUrl, i18n, WebRoutes} from "../Singletons";
 import style from "./Player.module.css"
 import PlayerComponent from "./Components/PlayerComponent";
 import {BsDownload} from "solid-icons/bs";
@@ -15,7 +15,7 @@ interface PlayInfo {
 
 
 const Player = () => {
-	document.title = "特别的人 | 伴奏网"
+
 	interface LyricObject {
 		album: string,
 		artist: string,
@@ -41,6 +41,9 @@ const Player = () => {
 	const [pitch, setPitch] = createSignal<number>(0); 
 	createEffect(() => {
 		setPlayUrl(baseUrl + params.play)
+	})
+	createEffect(()=>{
+		document.title = (playInfo()?.song_name ?? "") + i18n.Instrunet.DOC_TITLE.END;
 	})
 	fetch(baseUrl + "api/community/getvote?uuid=" + params.play).then(res => {
 		res.text().then(result => {
@@ -145,18 +148,18 @@ const Player = () => {
 													</>
 												})}
 											</select>
-											<button class={"btn btn-primary"} onClick={() => {
+											{(lyrics() && lyrics()?.length != 0)?  <button class={"btn btn-primary"} onClick={() => {
 												const blob = new Blob([lyrics()![lrcIndex()].lyrics], {type: "text/binary"});
 												const url = URL.createObjectURL(blob);
 												const a = document.createElement("a");
 												a.href = url;
-												a.download = lyrics()![lrcIndex()].title + '.lrc';
+												a.download = (lyrics() && lyrics()?.length != 0 )? lyrics()![lrcIndex()].title + '.lrc' : "";
 												document.body.appendChild(a);
 												a.click();
 												document.body.removeChild(a);
 												URL.revokeObjectURL(url);
-											}}><BsDownload/>歌词
-											</button>
+											}}><BsDownload/>{i18n.Instrunet.LRC}
+											</button> : null}
 										</div>
 
 									</Show>
@@ -176,8 +179,8 @@ const Player = () => {
 					</Show>
 				</div>
 				<div class="join w-full">
-					<a class={"btn grow join-item  btn-primary mt-2"} href={baseUrl + params.play}>下载</a>
-					<button class={"btn grow join-item  btn-primary mt-2"} popovertarget="pitched-download" style={{"anchor-name": "--pitched-anchor"} as any}>变调下载</button>
+					<a class={"btn grow join-item  btn-primary mt-2"} href={baseUrl + params.play}>{i18n.General.DOWNLOAD}</a>
+					<button class={"btn grow join-item  btn-primary mt-2"} popovertarget="pitched-download" style={{"anchor-name": "--pitched-anchor"} as any}>{i18n.Instrunet.PITCHING + i18n.General.DOWNLOAD}</button>
 					<ul class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm" popover={true} id="pitched-download" style={{"position-anchor": "--pitched-anchor"} as any}>
 												<li>
 													<div>
@@ -190,7 +193,7 @@ const Player = () => {
 												<li>
 													<a class="btn btn-primary" href={`${baseUrl}${params.play}?pitch=${pitch()}`} onClick={(e)=>{
 														e.currentTarget.innerHTML = "<div class='loading loading-spinner'></div>"
-													}}>下载</a>
+													}}>{i18n.General.DOWNLOAD}</a>
 												</li>
 					</ul>
 				</div>
@@ -275,7 +278,7 @@ const Player = () => {
 								}
 							}} class={"input grow"} onInput={(e)=>{
 								setCommentContent(e.target.value)
-							}} value={commentContent()} placeholder={"评论"}/>
+							}} value={commentContent()} placeholder={i18n.General.COMMENT}/>
 							<button id={"send-comment"} class={"btn btn-primary"} onClick={(e)=> {
 								fetch(baseUrl + "api/community/postComment", {
 									method: "POST",
@@ -303,7 +306,7 @@ const Player = () => {
 
 								})
 
-							}} disabled={!localStorage.getItem("uuid")}>{localStorage.getItem("uuid") ? "发送" : "请登录"}</button>
+							}} disabled={!localStorage.getItem("uuid")}>{localStorage.getItem("uuid") ? i18n.General.SEND : i18n.Instrunet.LOGIN_REQ}</button>
 						</div>
 
 						<div class={"divider "}></div>

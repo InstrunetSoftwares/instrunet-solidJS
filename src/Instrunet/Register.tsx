@@ -103,7 +103,7 @@ const Register = () => {
 										console.log(response.json())
 									}}>{pageStatus() === PageStatus.LOGGING ?
 								<span class="loading loading-spinner loading-md"></span>
-								: i18n.General.LOGIN}</button>
+								: i18n.General.REG}</button>
 						</fieldset>
 					</div>
 				</div>

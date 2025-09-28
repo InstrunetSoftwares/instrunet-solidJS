@@ -1,7 +1,7 @@
 import {CgPlayPause, CgPlayButton} from "solid-icons/cg";
 import {TiMediaRewind, TiMediaFastForward} from "solid-icons/ti";
 import {createSignal, Accessor, JSX, createEffect} from "solid-js";
-import {baseUrl, Kind} from "../../Singletons";
+import {baseUrl, i18n, Kind} from "../../Singletons";
 import {AiFillStepBackward, AiFillStepForward} from "solid-icons/ai";
 
 interface PlayInfoInterface {
@@ -95,7 +95,7 @@ const PlayerComponent = ({url, PlayInfo, onFinished, onNextPressed, onPreviousPr
 					<div class={"col-span-11 flex flex-col justify-center"} style={{"align-items": "center"}}>
 						<div class={"mb-2"}>
 							<h4 class={"text-2xl  pl-5 font-bold text-center"}>{PlayInfo()?.song_name}</h4>
-							<span>{PlayInfo()?.artist} - {PlayInfo()?.album_name} - {Kind[PlayInfo()?.kind!]}</span>
+							<span>{PlayInfo()?.artist} - {PlayInfo()?.album_name} - {i18n.Instrunet.KIND[PlayInfo()?.kind!]}</span>
 						</div>
 						<input classList={{["hidden"]: playingInfo().loading}} ref={(progressRef)} type={"range"} min={0} max={playingInfo()?.timeFull} step={0.01}
 							   value={lock() ? progressRef?.value : playingInfo()?.timeNow}
