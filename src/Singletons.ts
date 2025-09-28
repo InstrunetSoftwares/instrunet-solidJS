@@ -1,7 +1,6 @@
 ﻿import {Ii18n} from "./i18n/Ii18n";
 
 const i18n: Ii18n = (await (async () => {
-		return (await import("./i18n/en-US")).ENUS;
 		switch (navigator.language) {
 			case "zh-CN":
 				return (await import("./i18n/zh-CN")).ZHCN;
