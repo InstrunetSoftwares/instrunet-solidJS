@@ -22,7 +22,7 @@ const SecretPage = () => {
 
 			} catch { /* empty */
 			}
-		}} id={"id"} type={"text"}/><br/>
+		}} id={"id"} type={"text"}/><br />
 			<button class={"btn btn-primary"} onClick={async ()=>{
 				window.location.href =  baseUrl + "api/NcmStuff/DownloadMusic?id="+id()
 			}}>下载</button >
