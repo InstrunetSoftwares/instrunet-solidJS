@@ -69,7 +69,7 @@ const General = {
 	OPTIONAL: "Optional",
 	LOADING: "Loading",
 	DEL: "Delete",
-	DEL_CONFIRM: "Are you sure?",
+	DEL_CONFIRM: "Sure?",
 	ACTION: "Action",
 	FRONT: "Front",
 	DOWNLOAD: "Download",
