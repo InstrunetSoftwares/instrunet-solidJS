@@ -40,7 +40,11 @@ const InstrunetIndex: Component = () => {
 					message: "已在数据库中或队列中存在"
 				})
 
-			}else {
+			}else if (res.status === 429){
+				setUploadError({
+					message: "每人仅可在10分钟内上传6次"
+				})
+			} else {
 				setUploadError({
 					message: `HTTP Error: ${res.status} ${res.statusText}`
 				})
@@ -194,7 +198,7 @@ const InstrunetIndex: Component = () => {
 							if (parsedInfo.common.picture) {
 								if (parsedInfo.common.picture[0]) {
 									let pic = new Blob([parsedInfo.common.picture[0].data as BlobPart], {type: "image/png"});
-									const reader = new FileReader();
+
 										setForm({
 											...form(), albumCover: pic
 										})
@@ -307,7 +311,15 @@ const InstrunetIndex: Component = () => {
 							}).then(res => {
 								if (res.ok) {
 									setUploadDone("上传完成，请迈步“队列”页面")
-								} else {
+								} else if (res.status === 429){
+									setUploadError({
+										message: "每人仅可在10分钟内上传6次"
+									})
+								} else if (res.status === 500){
+									setUploadError({
+										message: "已在数据库中或队列中存在"
+									})
+								}else {
 									setUploadError({
 										message: `HTTP Error: ${res.status} ${res.statusText}`
 									})
