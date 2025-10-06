@@ -73,7 +73,7 @@ const Player = () => {
 					setComments(newArr);
 				})
 			}
-			console.log(comments())
+
 		})
 	})
 	createEffect(() => {
@@ -98,7 +98,7 @@ const Player = () => {
 			}).then(res => {
 				if (res.ok) {
 					res.json().then((j) => {
-						setLyrics(JSON.parse(j));
+						setLyrics(j);
 						console.log(lyrics())
 					})
 				} else {
