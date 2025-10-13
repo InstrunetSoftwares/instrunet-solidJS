@@ -5,9 +5,7 @@ import 'solid-devtools';
 import './index.css';
 import { Component, lazy } from "solid-js";
 import { Route, Router } from "@solidjs/router";
-import { BunchOfButtons, NavBar, NavBarButtonInSig } from "./Instrunet/Components/NavBar";
-import { FiMenu } from 'solid-icons/fi';
-import secretPage from "./Instrunet/SecretPage";
+import { BunchOfButtons, NavBar } from "./Instrunet/Components/NavBar";
 
 const root = document.getElementById('root');
 
@@ -102,7 +100,7 @@ render(() => {
 					<Wrapper Content={InstrunetPlayer} Navbar={true}/>
 				}></Route>
 				<Route path={"/playlist/:playlistuuid"} component={() => <Wrapper Content={InstrunetPlaylist} Navbar={true}/>}/>
-				<Route path={"/secret"} component={()=><Wrapper Content={secretPage} Navbar={false}/>}/>
+				<Route path={"/secret"} component={()=><Wrapper Content={SecretPage} Navbar={false}/>}/>
 			</>
 		})()}/>
 		<Route path={"/unlock-music"} component={() => <Wrapper Content={UnlockMusic} Navbar={false}/>}/>
