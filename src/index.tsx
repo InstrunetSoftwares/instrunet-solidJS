@@ -28,6 +28,7 @@ const InstrunetPlaylist = lazy(()=>import("./Instrunet/Playlist"))
 const UnlockMusic = lazy(()=>import("./UnlockMusic"))
 const Register = lazy(()=>import("./Instrunet/Register"));
 const SecretPage =  lazy(() => import("./Instrunet/SecretPage"))
+const Mixer = lazy(()=> import("./Instrunet/Mixer"));
 render(() => {
 	const SharedButtons = <BunchOfButtons />;
 	const GlobalNavBar = <NavBar Buttons={SharedButtons} />
