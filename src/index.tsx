@@ -1,5 +1,5 @@
 /* @refresh reload */
-import { render } from 'solid-js/web';
+import {render, Suspense} from 'solid-js/web';
 import 'solid-devtools';
 
 import './index.css';
@@ -7,6 +7,7 @@ import { Component, lazy } from "solid-js";
 import { Route, Router } from "@solidjs/router";
 import { BunchOfButtons, NavBar, NavBarButtonInSig } from "./Instrunet/Components/NavBar";
 import { FiMenu } from 'solid-icons/fi';
+import secretPage from "./Instrunet/SecretPage";
 
 const root = document.getElementById('root');
 
@@ -17,7 +18,9 @@ if (import.meta.env.DEV && !(root instanceof HTMLElement)) {
 }
 
 const AXCWGIndex = lazy(() => import("./PageNavigator"))
-const InstrunetIndex = lazy(() => import("./Instrunet/InstrunetIndex"))
+const InstrunetIndex = lazy(async ()=> {
+	return import("./Instrunet/InstrunetIndex")
+})
 const InstrunetQueuePage = lazy(() => import("./Instrunet/Queue"))
 const InstrunetLogin = lazy(() => import("./Instrunet/Login"))
 const InstrunetSearch = lazy(() => import("./Instrunet/Search"))
@@ -30,23 +33,33 @@ const Register = lazy(()=>import("./Instrunet/Register"));
 const SecretPage =  lazy(() => import("./Instrunet/SecretPage"))
 const Mixer = lazy(()=> import("./Instrunet/Mixer"));
 render(() => {
-	const SharedButtons = <BunchOfButtons />;
-	const GlobalNavBar = <NavBar Buttons={SharedButtons} />
-
-	const Wrapper = ({ Content }: { Content: Component }) => {
+	const SharedButtons = <BunchOfButtons/>;
+	const GlobalNavBar = <NavBar Buttons={SharedButtons}/>
+	const LoadingScreen = ({fullHeight}: { fullHeight?:boolean })=> {
+		return <div class={`hero bg-base-200 ${fullHeight ?"min-h-[100vh]" : "min-h-[calc(100vh-4rem)]"} `}>
+			<div class="hero-content text-center">
+				<div class="max-w-md">
+					<span class={"loading w-15 loading-spinner"}></span>
+				</div>
+			</div>
+		</div>
+	}
+	const Wrapper = ({Content, Navbar}: { Content: Component, Navbar :boolean }) => {
 		return <>
 			<div class="drawer">
-				<input id="my-drawer-3" type="checkbox" class="drawer-toggle" />
+				<input id="my-drawer-3" type="checkbox" class="drawer-toggle"/>
 				<div class="drawer-content flex flex-col">
-					{GlobalNavBar}
-					<Content />
+					{Navbar ? GlobalNavBar : null}
+					<Suspense fallback={<LoadingScreen fullHeight={!Navbar}/>}>
+						<Content/>
+					</Suspense>
 				</div>
 				<div class="drawer-side">
 					<label for="my-drawer-3" aria-label="close sidebar" class="drawer-overlay"></label>
 					<ul class="menu bg-base-200 min-h-full w-80 p-4">
 						<a class="btn btn-ghost text-xl font-medium" href={"/"}>
-										菜单
-									</a>
+							菜单
+						</a>
 						<BunchOfButtons/>
 					</ul>
 				</div>
@@ -55,40 +68,44 @@ render(() => {
 	}
 
 	return <Router>
-		<Route path={"/"} component={AXCWGIndex} />
+		<Route path={"/"} component={AXCWGIndex}/>
 		<Route path={"/instrunet"} children={(() => {
 			return <>
 				<Route path="/" component={() => {
-					return <Wrapper Content={InstrunetIndex} />
+					return <Wrapper Content={InstrunetIndex} Navbar={true}/>
 				}}></Route>
 				<Route path={"/queue"} component={() => {
-					return <Wrapper Content={InstrunetQueuePage} />}}>
+					return <Wrapper Content={InstrunetQueuePage} Navbar={true}/>
+				}}>
 				</Route>
-				<Route path={"/login"} component={(()=>{
-					return InstrunetLogin})()}>
+				<Route path={"/login"} component={(() => {
+					return <Wrapper Content={InstrunetLogin} Navbar={false}/>
+				})}>
 
 				</Route>
-				<Route path={"/logout"} component={(()=>{
-					return InstrunetLogout})()}/>
-				<Route path={"/register"} component={(()=>{
-					
-					return Register})()}/>
+				<Route path={"/logout"} component={() => {
+					return <Wrapper Content={InstrunetLogout} Navbar={false}/>
+				}}/>
+				<Route path={"/register"} component={(() => {
+
+					return <Wrapper Content={Register} Navbar={false}/>
+				})}/>
 				<Route path={"/home"} component={() => {
 					return <>
-					<Wrapper Content={InstrunetHome} />
-				</>}} />
+						<Wrapper Content={InstrunetHome} Navbar={true}/>
+					</>
+				}}/>
 				<Route path={"/search"} component={() => <>
-					<Wrapper Content={InstrunetSearch} />
+					<Wrapper Content={InstrunetSearch} Navbar={true}/>
 				</>}></Route>
 				<Route path={"/player"} component={() =>
-					<Wrapper Content={InstrunetPlayer} />
+					<Wrapper Content={InstrunetPlayer} Navbar={true}/>
 				}></Route>
-				<Route path={"/playlist/:playlistuuid"} component={()=><Wrapper Content={InstrunetPlaylist}/>}/>
-				<Route path={"/secret"} component={SecretPage}/>
+				<Route path={"/playlist/:playlistuuid"} component={() => <Wrapper Content={InstrunetPlaylist} Navbar={true}/>}/>
+				<Route path={"/secret"} component={()=><Wrapper Content={secretPage} Navbar={false}/>}/>
 			</>
-		})()} />
-		<Route path={"/unlock-music"} component={UnlockMusic}/>
-
+		})()}/>
+		<Route path={"/unlock-music"} component={() => <Wrapper Content={UnlockMusic} Navbar={false}/>}/>
 
 
 	</Router>
