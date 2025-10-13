@@ -101,6 +101,7 @@ render(() => {
 				}></Route>
 				<Route path={"/playlist/:playlistuuid"} component={() => <Wrapper Content={InstrunetPlaylist} Navbar={true}/>}/>
 				<Route path={"/secret"} component={()=><Wrapper Content={SecretPage} Navbar={false}/>}/>
+				<Route path={"/mixer"} component={()=><Wrapper Content={Mixer} Navbar={false}/>}/>
 			</>
 		})()}/>
 		<Route path={"/unlock-music"} component={() => <Wrapper Content={UnlockMusic} Navbar={false}/>}/>
