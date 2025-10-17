@@ -66,8 +66,8 @@ const NavBar = ({Buttons}: {Buttons: JSX.Element}) => {
 		<div class={" flex justify-end grow"}>
 			{
 				fetchDone() ? userInfo() ?
-					<a class={"btn-square rounded-xl"} href={WebRoutes.instruNet + "/home"}><img class={"inline-block size-10 rounded-xl"}
-						src={URL.createObjectURL(userInfo()!.avatar)}></img></a> :
+					<a class={"btn-square rounded-xl"} href={WebRoutes.instruNet + "/home"}><div style={{"background-size": "cover","background-image": `url('${URL.createObjectURL(userInfo()!.avatar)}')`}} class={"inline-block  size-10 rounded-xl bg-center bg-no-repeat  bg-clip-content  "}
+						></div></a> :
 					<>
 						<NavBarButtonInSig
 							href={WebRoutes.instruNet + "/login"}>{i18n.General.LOGIN}</NavBarButtonInSig>

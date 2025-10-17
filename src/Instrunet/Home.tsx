@@ -1,16 +1,9 @@
 import { createEffect, createSignal, For, Show } from "solid-js";
 import {baseUrl, immutableRemoveAt, Kind, WebRoutes} from "../Singletons";
-import style from "./Home.module.css";
-import {BiRegularCross, BiRegularImageAdd, BiSolidDownArrow, BiSolidLeftArrow, BiSolidRightArrow} from "solid-icons/bi";
+import {BiSolidDownArrow, BiSolidLeftArrow} from "solid-icons/bi";
 import { createMediaQuery } from "@solid-primitives/media";
-import {CgAdd, CgCross} from "solid-icons/cg";
-import { TbError404 } from "solid-icons/tb";
-import { FaSolidCross } from "solid-icons/fa";
-import { FiDelete } from "solid-icons/fi";
-import { TiDelete, TiUserDelete } from "solid-icons/ti";
-import { RiSystemDeleteBackFill } from "solid-icons/ri";
-import {AiOutlineDelete, AiTwotoneFileAdd} from "solid-icons/ai";
-import {SiGodaddy} from "solid-icons/si";
+import {AiOutlineDelete} from "solid-icons/ai";
+
 const Home = () => {
 	interface UserInfo {
 		uuid: string, username: string, email: string
