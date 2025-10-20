@@ -65,7 +65,7 @@ const Home = () => {
 			</tr>}>
 				<For each={uploadedSong()}>
 					{(item, index) => {
-						return <tr class={"cursor-pointer"} classList={{ ["hidden"]: uploadedCollapsed() }} >
+						return <tr class={"cursor-pointer hover:bg-base-200"} classList={{ ["hidden"]: uploadedCollapsed() }} >
 
 							<td onClick={()=>{
 								const a = document.createElement("a");
@@ -186,7 +186,7 @@ const Home = () => {
 				</div>
 			</div>
 			<div >
-				<table class={`table lg:table-md table-xs table-zebra border-2 border-base-content/10`}>
+				<table class={`table lg:table-md table-xs  border-2 border-base-content/10`}>
 					<thead>
 						<tr>
 							<td colspan={5} class="" onClick={() => setUploadedCollapsed(!uploadedCollapsed())}><div class="flex"><div>{uploadedCollapsed() ? "展开" : "收缩"}</div><div class="grow "></div><div class="">{uploadedCollapsed() ? <BiSolidLeftArrow class="h-full" /> : <BiSolidDownArrow class="h-full" />}</div></div></td>
