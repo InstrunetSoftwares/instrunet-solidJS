@@ -3,6 +3,7 @@ import {baseUrl, immutableRemoveAt, Kind, WebRoutes} from "../Singletons";
 import {BiSolidDownArrow, BiSolidLeftArrow} from "solid-icons/bi";
 import { createMediaQuery } from "@solid-primitives/media";
 import {AiOutlineDelete} from "solid-icons/ai";
+import {Suspense} from "solid-js/web";
 
 const Home = () => {
 	interface UserInfo {
@@ -23,6 +24,7 @@ const Home = () => {
 	const [uploadedCollapsed, setUploadedCollapsed] = createSignal<boolean>(localStorage.getItem("uploadedCollapsed") ? localStorage.getItem("uploadedCollapsed") === "true" : false);
 	const [uploadedPlaylist, setUploadedPlaylist] = createSignal<Playlist[] | null | undefined>(undefined);
 	const small = createMediaQuery("(max-width: 40rem)")
+
 	fetch(baseUrl + "playlist-owned", {
 		method: "POST", credentials: "include"
 	}).then(res => {
@@ -140,11 +142,17 @@ const Home = () => {
 						</tr>
 					</thead>
 					<tbody>
+					<Suspense></Suspense>
 						<Show when={uploadedSong()} keyed={true} fallback={uploadedSong() === undefined ? <>
 							<div class="loading loading-spinner loading-xl"></div>
 						</> : <></>}><></>
 							{uploadedSong() ? uploadedSong()!.map((item, index) => {
-								return <tr classList={{ ["hidden"]: uploadedCollapsed() }}>
+								return <tr class={"cursor-pointer"} classList={{ ["hidden"]: uploadedCollapsed() }} onClick={()=>{
+									const a = document.createElement("a");
+									a.href = WebRoutes.instruNet + "/player?play="+item.uuid
+									document.body.appendChild(a);
+									a.click()
+								}}>
 
 									<td>{item.song_name}</td>
 									<td>{item.album_name}</td>
