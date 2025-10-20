@@ -1,4 +1,4 @@
-import { createEffect, createSignal, For, Show } from "solid-js";
+import {createEffect, createResource, createSignal, For, Show} from "solid-js";
 import {baseUrl, immutableRemoveAt, Kind, WebRoutes} from "../Singletons";
 import {BiSolidDownArrow, BiSolidLeftArrow} from "solid-icons/bi";
 import { createMediaQuery } from "@solid-primitives/media";
@@ -9,18 +9,12 @@ const Home = () => {
 	interface UserInfo {
 		uuid: string, username: string, email: string
 	}
-	interface UploadedSongReceivePayload {
-		uuid: string
-	}
-	interface UploadedSong {
-		uuid: string, song_name: string, artist: string, album_name: string, kind: number
-	}
+
 	interface Playlist {
 		owner: string, private: boolean, title: string, tmb: any, uuid: string, content: string[]
 	}
 
 	const [userInfo, setUserInfo] = createSignal<UserInfo>();
-	const [uploadedSong, setUploadedSong] = createSignal<UploadedSong[] | undefined | null>([]);
 	const [uploadedCollapsed, setUploadedCollapsed] = createSignal<boolean>(localStorage.getItem("uploadedCollapsed") ? localStorage.getItem("uploadedCollapsed") === "true" : false);
 	const [uploadedPlaylist, setUploadedPlaylist] = createSignal<Playlist[] | null | undefined>(undefined);
 	const small = createMediaQuery("(max-width: 40rem)")
@@ -36,6 +30,92 @@ const Home = () => {
 			setUploadedPlaylist(null)
 		}
 	})
+	const ListSongs =  ()=>{
+		interface UploadedSongReceivePayload {
+			uuid: string
+		}
+		interface UploadedSong {
+			uuid: string, song_name: string, artist: string, album_name: string, kind: number
+		}
+
+		const [uploadedSong, {mutate, refetch}] = createResource<UploadedSong[] | undefined | null>(async ()=>{
+			let returnData: UploadedSong[] | null = [];
+			let res = await fetch(baseUrl + "getUploaded", {
+				credentials: "include"
+			})
+			if (res.ok) {
+				let json = await res.json()
+
+				for (const received of json as UploadedSongReceivePayload[]) {
+					let res = await fetch(baseUrl + "getSingle?id=" + received.uuid)
+					let json = await res.json();
+					json.uuid = received.uuid;
+					returnData?.push(json);
+				}
+			} else {
+				returnData = null;
+			}
+			return returnData;
+
+		});
+
+		return <>
+			<Suspense fallback={<tr>
+				<td colspan={5} class={"text-center"} classList={{ ["hidden"]: uploadedCollapsed() }}  ><span class={"loading loading-xl loading-spinner"}></span></td>
+			</tr>}>
+				<For each={uploadedSong()}>
+					{(item, index) => {
+						return <tr class={"cursor-pointer"} classList={{ ["hidden"]: uploadedCollapsed() }} >
+
+							<td onClick={()=>{
+								const a = document.createElement("a");
+								a.href = WebRoutes.instruNet + "/player?play="+item.uuid
+								document.body.appendChild(a);
+								a.click()
+							}}>{item.song_name}</td>
+							<td onClick={()=>{
+								const a = document.createElement("a");
+								a.href = WebRoutes.instruNet + "/player?play="+item.uuid
+								document.body.appendChild(a);
+								a.click()
+							}}>{item.album_name}</td>
+							<td onClick={()=>{
+								const a = document.createElement("a");
+								a.href = WebRoutes.instruNet + "/player?play="+item.uuid
+								document.body.appendChild(a);
+								a.click()
+							}}>{item.artist}</td>
+							<td onClick={()=>{
+								const a = document.createElement("a");
+								a.href = WebRoutes.instruNet + "/player?play="+item.uuid
+								document.body.appendChild(a);
+								a.click()
+							}}>{Kind[item.kind]}</td>
+							<td><button class="btn btn-sm  sm:btn-md bg-red-500" onClick={(e)=>{
+								// Hilarious.
+								if(e.target.innerHTML !=="确定？") {
+									e.target.innerHTML = "确定？";
+								}else {
+									const spinner = document.createElement("span");
+									spinner.className = "loading loading-spinner";
+									e.currentTarget.innerHTML = "";
+									e.currentTarget.appendChild(spinner);
+									fetch(baseUrl+"delSong?uuid=" + item.uuid, {
+										credentials: "include"
+									}).then(res=>{
+										if(res.ok){
+											refetch()
+										}
+									})
+								}
+							}}>{small() ? <AiOutlineDelete/> :"删除" }</button></td>
+						</tr>
+					}}
+				</For>
+			</Suspense>
+		</>;
+	}
+
 	fetch(baseUrl + "userapi", {
 		method: "GET", credentials: "include"
 	}).then(res => {
@@ -52,29 +132,9 @@ const Home = () => {
 		localStorage.setItem("uploadedCollapsed", uploadedCollapsed() ? "true" : "false")
 	})
 
-	fetch(baseUrl + "getUploaded", {
-		credentials: "include"
-	}).then(async (res) => {
-		if (res.ok) {
-			let json = await res.json()
 
-				for (const received of json as UploadedSongReceivePayload[]) {
-					let res = await fetch(baseUrl + "getSingle?id=" + received.uuid)
-					let json = await res.json(); 
-							json.uuid = received.uuid;
-							setUploadedSong([...uploadedSong() ? uploadedSong()! : [], json])
-						
-					
-				
-
-			}
-		} else {
-			setUploadedSong(null);
-		}
-	})
 	createEffect(()=>{
-
-						document.title = userInfo()?.username + "的个人主页 | 伴奏网"
+		document.title = userInfo()?.username + "的个人主页 | 伴奏网"
 	})
 
 	return <>
@@ -142,39 +202,9 @@ const Home = () => {
 						</tr>
 					</thead>
 					<tbody>
-					<Suspense></Suspense>
-						<Show when={uploadedSong()} keyed={true} fallback={uploadedSong() === undefined ? <>
-							<div class="loading loading-spinner loading-xl"></div>
-						</> : <></>}><></>
-							{uploadedSong() ? uploadedSong()!.map((item, index) => {
-								return <tr class={"cursor-pointer"} classList={{ ["hidden"]: uploadedCollapsed() }} onClick={()=>{
-									const a = document.createElement("a");
-									a.href = WebRoutes.instruNet + "/player?play="+item.uuid
-									document.body.appendChild(a);
-									a.click()
-								}}>
 
-									<td>{item.song_name}</td>
-									<td>{item.album_name}</td>
-									<td>{item.artist}</td>
-									<td>{Kind[item.kind]}</td>
-									<td><button class="btn btn-sm  sm:btn-md bg-red-500" onClick={(e)=>{
-										// Hilarious.
-										if(e.target.innerHTML !=="确定？") {
-											e.target.innerHTML = "确定？";
-										}else {
-											fetch(baseUrl+"delSong?uuid=" + item.uuid, {
-												credentials: "include"
-											}).then(res=>{
-												if(res.ok){
-													setUploadedSong(immutableRemoveAt(uploadedSong()!, index, 1))
-												}
-											})
-										}
-									}}>{small() ? <AiOutlineDelete/> :"删除" }</button></td>
-								</tr>
-							}) : null}
-						</Show>
+
+					<ListSongs/>
 
 					</tbody>
 				</table>
