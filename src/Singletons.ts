@@ -14,7 +14,7 @@ const i18n: Ii18n = (await (async () => {
 	}
 )()) as unknown as Ii18n;
 
-const baseUrl = "https://andyxie.cn:8200/";
+const baseUrl = "https://mc.andyxie.cn:8200/";
 // const baseUrl = "http://localhost:5052/";
 // const baseUrl = "http://localhost:5298/";
 
