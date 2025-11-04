@@ -1,6 +1,12 @@
 {
-  "short_name": "伴奏网 InstruNet",
-  "name": "全国唯一免费的伴奏分享平台",
+  "short_name": "伴奏网",
+  "name": "伴奏网 InstruNet",
+  "id": "com.axcwg.instrunet",
+  "description": "全国唯一免费的伴奏分享平台",
+  "orientation": "any",
+  "license": "MIT",
+  "categories": ["music"],
+  "lang": "zh",
   "icons": [
     {
       "src": "src/assets/favicon.ico",
