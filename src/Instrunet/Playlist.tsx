@@ -1,28 +1,29 @@
 import {useParams, useSearchParams} from "@solidjs/router";
-import {createEffect, createSignal, JSX, Show} from "solid-js";
+import {createEffect, createResource, createSignal, JSX, Show} from "solid-js";
 import {baseUrl, i18n, immutableInsertBefore, immutableRemoveAt, Kind} from "../Singletons";
 import PlayerComponent from "./Components/PlayerComponent";
 import {AiOutlineDelete} from "solid-icons/ai";
 import {CgClose} from "solid-icons/cg";
 import {VsInsert} from "solid-icons/vs";
 import {BsSearch} from "solid-icons/bs";
+import {Suspense} from "solid-js/web";
 
 
 const Playlist = () => {
 	interface PlaylistInfo {
 		owner: string,
 		playlistuuid: string,
-		content: string[],
+		content: PlayInfo[],
 		private: string,
 		title: string,
 		ownerName: string
 	}
 
 	interface PlayInfo {
-		song_name: string,
-		album_name: string,
+		songName: string,
+		albumName: string,
 		artist: string,
-		kind: number
+		kind: number, uuid:string
 	}
 
 	interface InsertInfo {
@@ -33,8 +34,23 @@ const Playlist = () => {
 
 	const params = useParams();
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [playlistInfo, setPlaylistInfo] = createSignal<PlaylistInfo | null | undefined>(undefined);
-	const [playlistSongInfo, setPlayListSongInfo] = createSignal<PlayInfo[]>([]);
+	// const [playlistInfo, setPlaylistInfo] = createSignal<PlaylistInfo | null | undefined>(undefined);
+	const [playlistInfo, {mutate, refetch}] = createResource(async ()=>{
+		const res = await fetch(baseUrl + "playlist?playlistUuid=" + params.playlistuuid)
+			if (res.ok) {
+				const j = await res.json()
+					console.log(j)
+
+					if (searchParams.track) {
+						let parsed = Number.parseInt(searchParams.track as string);
+						console.log(parsed)
+						if (parsed < j.content!.length) {
+							setPlayCurrentIndex(parsed)
+						}
+					}
+				return j as PlaylistInfo;
+		}})
+
 	const [playlistInsertInfo, setPlaylistInsertInfo] = createSignal<InsertInfo>({
 		inserting: false
 	})
@@ -43,40 +59,15 @@ const Playlist = () => {
 	const [playUrl, setPlayUrl] = createSignal<string>("");
 	const [popOpened, setPopOpened] = createSignal<boolean>(false);
 
-	fetch(baseUrl + "playlist?playlistUuid=" + params.playlistuuid).then(res => {
-		if (res.ok) {
-			res.json().then(async (j) => {
-				console.log(j)
-				for (const element of (j as PlaylistInfo).content) {
-					let res = await fetch(baseUrl + "getsingle?id=" + element)
-					if (res.ok) {
-						let j = await res.json()
-						setPlayListSongInfo([...playlistSongInfo() ? playlistSongInfo()! : [], j])
 
-					}
-				}
-				if (searchParams.track) {
-					let parsed = Number.parseInt(searchParams.track as string);
-					console.log(parsed)
-					if (parsed < playlistSongInfo()!.length) {
-						setPlayCurrentIndex(parsed)
-					}
-				}
-
-
-				setPlaylistInfo(j)
-
-			})
-		}
-	})
 	createEffect(() => {
-		if (playlistSongInfo()) {
-			setPlayCurrentSong(playlistSongInfo()![playCurrentIndex()])
+		if (playlistInfo()) {
+			setPlayCurrentSong(playlistInfo()!.content![playCurrentIndex()])
 		}
 	})
 
 	createEffect(() => {
-		setPlayUrl(baseUrl + playlistInfo()?.content[playCurrentIndex()])
+		setPlayUrl(baseUrl + playlistInfo()?.content[playCurrentIndex()].uuid)
 	})
 	createEffect(()=>{
 		document.title = i18n.Instrunet.DOC_TITLE.START + playlistInfo()?.title + i18n.Instrunet.DOC_TITLE.END
@@ -96,8 +87,8 @@ const Playlist = () => {
 		}
 	})
 	createEffect(() => {
-		if (playlistSongInfo()) {
-			if (playCurrentIndex() >= playlistSongInfo()!.length) {
+		if (playlistInfo()) {
+			if (playCurrentIndex() >= playlistInfo()!.content!.length) {
 				setPlayCurrentIndex(0)
 			}
 		}
@@ -188,28 +179,24 @@ const Playlist = () => {
 						<tbody>
 						{searched().map((item, index) => {
 							return <tr onClick={() => {
-								setPlaylistInfo({
-									...playlistInfo()!, content: (() => {
-										let arr = [...playlistInfo()!.content];
-										arr.push(item.uuid);
-										return arr;
-									})()
-								})
-								setPlayListSongInfo((() => {
-									let arr = [...playlistSongInfo()!];
+								const value = (() => {
+									let arr = [...playlistInfo()!.content!];
 									arr.push({
-										song_name: item.song_name,
-										album_name: item.album_name,
+										songName: item.song_name,
+										albumName: item.album_name,
 										kind: item.kind,
-										artist: item.artist
+										artist: item.artist, uuid: item.uuid
 									});
-									return arr
-								})())
+									return {...playlistInfo()!, content: arr};
+								})();
 								fetch(baseUrl + "upload-playlist", {
 									method: "POST", credentials: "include", headers: {
 										"Content-Type": "application/json"
-									}, body: JSON.stringify(playlistInfo())
+									}, body:  JSON.stringify(value)
+								}).then(()=>{
+									mutate(value)
 								})
+
 								setPopOpened(false)
 
 							}}>
@@ -270,14 +257,17 @@ const Playlist = () => {
 
 						 }}></div>
 					{
-						playlistInfo()?.owner === localStorage.getItem("uuid") ? <input oninput={(e) => {
+						playlistInfo()?.owner === localStorage.getItem("uuid") ? <input onfocusout={(e) => {
 
+								const value = {
+									...playlistInfo()!, title: e.target.value
+								};
 								fetch(baseUrl + "upload-playlist", {
 									method: "POST", credentials: "include", headers: {
 										"Content-Type": "application/json"
-									}, body: JSON.stringify({
-										...playlistInfo()!, title: e.target.value
-									})
+									}, body: JSON.stringify(value)
+								}).then(()=>{
+									mutate(value)
 								})
 							}} type="text" class="text-center text-2xl font-bold mt-2"
 																						value={playlistInfo()?.title}></input> :
@@ -290,16 +280,16 @@ const Playlist = () => {
 
 					<div class="text-center">{playlistInfo()?.ownerName}</div>
 					<Show when={playlistInfo()} keyed={false} fallback={<>{i18n.General.LOADING}</>}>
-						<Show when={playlistSongInfo()} keyed={false}>
+						<Show when={playlistInfo()?.content} keyed={false}>
 							<PlayerComponent autoplay={true} onPreviousPressed={() => {
 								if (playCurrentIndex() === 0) {
-									setPlayCurrentIndex(playlistSongInfo()!.length - 1)
+									setPlayCurrentIndex(playlistInfo()!.content.length - 1)
 								} else {
 									setPlayCurrentIndex(playCurrentIndex() - 1)
 								}
 								ParamHook()
 							}} url={playUrl} onFinished={(e) => {
-								if (playCurrentIndex() === playlistSongInfo()!.length - 1) {
+								if (playCurrentIndex() === playlistInfo()!.content.length - 1) {
 									setPlayCurrentIndex(0)
 								} else {
 									setPlayCurrentIndex(playCurrentIndex() + 1)
@@ -308,7 +298,7 @@ const Playlist = () => {
 
 
 							}} onNextPressed={() => {
-								if (playCurrentIndex() === playlistSongInfo()!.length - 1) {
+								if (playCurrentIndex() === playlistInfo()!.content!.length - 1) {
 									setPlayCurrentIndex(0)
 								} else {
 									setPlayCurrentIndex(playCurrentIndex() + 1)
@@ -320,129 +310,126 @@ const Playlist = () => {
 
 				</div>
 				<div class="max-h-full lg:max-h-170 lg:overflow-y-scroll">
-					<button class={"btn btn-error w-full mb-3"} onClick={(e) => {
-						if (e.currentTarget.innerText === i18n.General.DEL_CONFIRM) {
-							fetch(baseUrl + "remove-playlist", {
-								method: "POST",
-								credentials: "include",
-								headers: {
-									"Content-Type": "application/json"
-								},
-								body: JSON.stringify({
-									playlistuuid: params.playlistuuid,
-								})
-							}).then(res => {
-									if (res.ok) {
-										window.history.back();
-									}
-								}
-							)
-						}else {
-							e.currentTarget.innerText = i18n.General.DEL_CONFIRM
-							}
-					}}>{i18n.General.DEL}
-					</button>
-					<table class="table  table-sm w-full border-2 border-base-content/10">
-						<thead>
-						<tr>
-							<td class={"lg:table-cell hidden"}>{i18n.Instrunet.COVER}</td>
-							<td>{i18n.Instrunet.SONG_NAME}</td>
-							<td>{i18n.Instrunet.ALBUM_NAME}</td>
-							<td>{i18n.Instrunet.ARTIST}</td>
-							<td>{i18n.Instrunet.KIND_SELF}</td>
-							{playlistInfo()?.owner === localStorage.getItem("uuid") ? <td>{i18n.General.ACTION}</td> : null}
-
-						</tr>
-						</thead>
-						<tbody>
-
-						{
-							playlistSongInfo() ? playlistSongInfo()!.map((item, index) => {
-								return <tr classList={{["bg-base-300"]: playCurrentIndex() === index}}
-										   class={"hover:bg-base-200"}>
-									<td class={"lg:table-cell hidden"} onClick={() => {
-										setPlayCurrentIndex(index)
-									}}>{playlistInfo()?.content[index] ?
-										<div class="lg:w-15 lg:h-15 w-10 h-10 border-1 bg-center bg-contain" style={{
-											"background-image": `url('${baseUrl + "getAlbumCover?id=" + playlistInfo()?.content[index]}')`,
-											"background-repeat": "no-repeat"
-										}}>
-										</div> : null} </td>
-									<td onClick={() => {
-										setPlayCurrentIndex(index)
-										ParamHook()
-									}}>{item.song_name}</td>
-									<td onClick={() => {
-										setPlayCurrentIndex(index)
-										ParamHook()
-
-									}}>{item.album_name}</td>
-									<td onClick={() => {
-										setPlayCurrentIndex(index)
-										ParamHook()
-
-									}}>{item.artist}</td>
-									<td onClick={() => {
-										setPlayCurrentIndex(index)
-										ParamHook()
-
-									}}>{Kind[item.kind]}</td>
-									{playlistInfo()?.owner === localStorage.getItem("uuid") ? <td>
-										<button class="btn bg-red-500 btn-square" onClick={() => {
-											setPlaylistInfo({
-												...playlistInfo()!,
-												content: immutableRemoveAt(playlistInfo()!.content, index, 1)
-											})
-											setPlayListSongInfo(immutableRemoveAt(playlistSongInfo()!, index, 1))
-											fetch(baseUrl + "upload-playlist", {
-												method: "POST", credentials: "include", headers: {
-													"Content-Type": "application/json"
-												}, body: JSON.stringify(playlistInfo())
-											})
-
-
-										}}><AiOutlineDelete/></button>
-										{
-											playlistInsertInfo().inserting ?
-												<button class={"btn btn-primary btn-square"} onClick={(e) => {
-													setPlaylistInsertInfo({
-														...playlistInsertInfo(), beforeB: index, inserting: false
-													})
-													setPlaylistInfo({
-														...playlistInfo()!,
-														content: immutableInsertBefore(playlistInfo()!.content, playlistInsertInfo().a!, playlistInsertInfo().beforeB!)
-													})
-													setPlayListSongInfo(immutableInsertBefore(playlistSongInfo()!, playlistInsertInfo().a!, playlistInsertInfo().beforeB!))
-													fetch(baseUrl + "upload-playlist", {
-														method: "POST", credentials: "include", headers: {
-															"Content-Type": "application/json"
-														}, body: JSON.stringify(playlistInfo())
-													})
-												}}>{i18n.General.FRONT}</button> :
-												<button class={"btn btn-square"} onClick={(e) => {
-													setPlaylistInsertInfo({
-														...playlistInsertInfo(), a: index, inserting: true
-													})
-												}}><VsInsert/></button>
+						<button class={"btn btn-error w-full mb-3"} onClick={(e) => {
+							if (e.currentTarget.innerText === i18n.General.DEL_CONFIRM) {
+								fetch(baseUrl + "remove-playlist", {
+									method: "POST",
+									credentials: "include",
+									headers: {
+										"Content-Type": "application/json"
+									},
+									body: JSON.stringify({
+										playlistuuid: params.playlistuuid,
+									})
+								}).then(res => {
+										if (res.ok) {
+											window.history.back();
 										}
+									}
+								)
+							}else {
+								e.currentTarget.innerText = i18n.General.DEL_CONFIRM
+							}
+						}}>{i18n.General.DEL}
+						</button>
+						<table class="table  table-sm w-full border-2 border-base-content/10">
+							<thead>
+							<tr>
+								<td class={"lg:table-cell hidden"}>{i18n.Instrunet.COVER}</td>
+								<td>{i18n.Instrunet.SONG_NAME}</td>
+								<td>{i18n.Instrunet.ALBUM_NAME}</td>
+								<td>{i18n.Instrunet.ARTIST}</td>
+								<td>{i18n.Instrunet.KIND_SELF}</td>
+								{playlistInfo()?.owner === localStorage.getItem("uuid") ? <td>{i18n.General.ACTION}</td> : null}
 
-									</td> : null}
+							</tr>
+							</thead>
+							<tbody>
+
+							{
+								playlistInfo()?.content ? playlistInfo()!.content.map((item, index) => {
+									return <tr classList={{["bg-base-300"]: playCurrentIndex() === index}}
+											   class={"hover:bg-base-200"}>
+										<td class={"lg:table-cell hidden"} onClick={() => {
+											setPlayCurrentIndex(index)
+										}}>{playlistInfo()?.content[index] ?
+											<div class="lg:w-15 lg:h-15 w-10 h-10 border-1 bg-center bg-contain" style={{
+												"background-image": `url('${baseUrl + "getAlbumCover?id=" + playlistInfo()?.content[index].uuid}')`,
+												"background-repeat": "no-repeat"
+											}}>
+											</div> : null} </td>
+										<td onClick={() => {
+											setPlayCurrentIndex(index)
+											ParamHook()
+										}}>{item.songName}</td>
+										<td onClick={() => {
+											setPlayCurrentIndex(index)
+											ParamHook()
+
+										}}>{item.albumName}</td>
+										<td onClick={() => {
+											setPlayCurrentIndex(index)
+											ParamHook()
+
+										}}>{item.artist}</td>
+										<td onClick={() => {
+											setPlayCurrentIndex(index)
+											ParamHook()
+
+										}}>{Kind[item.kind]}</td>
+										{playlistInfo()?.owner === localStorage.getItem("uuid") ? <td>
+											<button class="btn bg-red-500 btn-square" onClick={() => {
+												const value = {...playlistInfo()!, content: immutableRemoveAt(playlistInfo()!.content, index, 1)};
+												fetch(baseUrl + "upload-playlist", {
+													method: "POST", credentials: "include", headers: {
+														"Content-Type": "application/json"
+													}, body: JSON.stringify(value)
+												}).then(()=> mutate(value))
 
 
-								</tr>
-							}) : null
-						}
-						{
-							playlistInfo()?.owner === localStorage.getItem("uuid") ? <tr>
-								<td colspan={6} class={"text-center"} onClick={() => {
-									setPopOpened(true)
-								}}>+
-								</td>
-							</tr> : null
-						}
+											}}><AiOutlineDelete/></button>
+											{
+												playlistInsertInfo().inserting ?
+													<button class={"btn btn-primary btn-square"} onClick={(e) => {
+														setPlaylistInsertInfo({
+															...playlistInsertInfo(), beforeB: index, inserting: false
+														})
 
-						</tbody>
-					</table>
+														const value = {...playlistInfo()!, content: immutableInsertBefore(playlistInfo()!.content, playlistInsertInfo().a!, playlistInsertInfo().beforeB!)
+														};
+														fetch(baseUrl + "upload-playlist", {
+															method: "POST", credentials: "include", headers: {
+																"Content-Type": "application/json"
+															}, body: JSON.stringify(value)
+														}).then(()=>{
+															mutate(value);
+														})
+													}}>{i18n.General.FRONT}</button> :
+													<button class={"btn btn-square"} onClick={(e) => {
+														setPlaylistInsertInfo({
+															...playlistInsertInfo(), a: index, inserting: true
+														})
+													}}><VsInsert/></button>
+											}
+
+										</td> : null}
+
+
+									</tr>
+								}) : null
+							}
+							{
+								playlistInfo()?.owner === localStorage.getItem("uuid") ? <tr>
+									<td colspan={6} class={"text-center"} onClick={() => {
+										setPopOpened(true)
+									}}>+
+									</td>
+								</tr> : null
+							}
+
+							</tbody>
+						</table>
+
 				</div>
 			</div>
 		</div>

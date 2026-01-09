@@ -5,8 +5,8 @@ import {baseUrl, i18n, Kind} from "../../Singletons";
 import {AiFillStepBackward, AiFillStepForward} from "solid-icons/ai";
 
 interface PlayInfoInterface {
-	song_name: string,
-	album_name: string,
+	songName: string,
+	albumName: string,
 	artist: string,
 	kind: number
 }
@@ -47,9 +47,9 @@ const PlayerComponent = ({url, PlayInfo, onFinished, onNextPressed, onPreviousPr
 	createEffect(()=>{
 		if(navigator.mediaSession){
 			navigator.mediaSession.metadata = new MediaMetadata({
-				title: PlayInfo()?.song_name, 
+				title: PlayInfo()?.songName,
 				artist: PlayInfo()?.artist, 
-				album: PlayInfo()?.album_name, 
+				album: PlayInfo()?.albumName,
 				artwork: [
 					{
 						src: baseUrl + "getalbumcover?id="+url().replace(baseUrl, ""), 
@@ -94,8 +94,8 @@ const PlayerComponent = ({url, PlayInfo, onFinished, onNextPressed, onPreviousPr
 				<div class={"mx-auto  grid grid-cols-12 w-full"}>
 					<div class={"col-span-11 flex flex-col justify-center"} style={{"align-items": "center"}}>
 						<div class={"mb-2"}>
-							<h4 class={"text-2xl  pl-5 font-bold text-center"}>{PlayInfo()?.song_name}</h4>
-							<span>{PlayInfo()?.artist} - {PlayInfo()?.album_name} - {i18n.Instrunet.KIND[PlayInfo()?.kind!]}</span>
+							<h4 class={"text-2xl  pl-5 font-bold text-center"}>{PlayInfo()?.songName}</h4>
+							<span>{PlayInfo()?.artist} - {PlayInfo()?.albumName} - {i18n.Instrunet.KIND[PlayInfo()?.kind!]}</span>
 						</div>
 						<input classList={{["hidden"]: playingInfo().loading}} ref={(progressRef)} type={"range"} min={0} max={playingInfo()?.timeFull} step={0.01}
 							   value={lock() ? progressRef?.value : playingInfo()?.timeNow}

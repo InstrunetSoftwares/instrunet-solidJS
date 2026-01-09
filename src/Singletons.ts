@@ -18,7 +18,6 @@ let baseUrl:string = "https://andyxie.cn:8200/";
 if(window.location.hostname.indexOf("axcwg") !== -1){
 	baseUrl = "https://api-instrunet.axcwg.cn/";
 }
-// const baseUrl = "http://localhost:5052/";
 // const baseUrl = "http://localhost:5298/";
 
 const Kind: string[] = [

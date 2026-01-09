@@ -1,7 +1,7 @@
-import {createEffect, createResource, createSignal, For, Show} from "solid-js";
-import {baseUrl, immutableRemoveAt, Kind, WebRoutes} from "../Singletons";
+import {createEffect, createResource, createSignal, For} from "solid-js";
+import {baseUrl, Kind, WebRoutes} from "../Singletons";
 import {BiSolidDownArrow, BiSolidLeftArrow} from "solid-icons/bi";
-import { createMediaQuery } from "@solid-primitives/media";
+import {createMediaQuery} from "@solid-primitives/media";
 import {AiOutlineDelete} from "solid-icons/ai";
 import {Suspense} from "solid-js/web";
 
@@ -11,7 +11,7 @@ const Home = () => {
 	}
 
 	interface Playlist {
-		owner: string, private: boolean, title: string, tmb: any, uuid: string, content: string[]
+		owner: string, private: boolean, title: string, uuid: string, content: string[]
 	}
 
 	const [userInfo, setUserInfo] = createSignal<UserInfo>();
@@ -35,23 +35,16 @@ const Home = () => {
 			uuid: string
 		}
 		interface UploadedSong {
-			uuid: string, song_name: string, artist: string, album_name: string, kind: number
+			uuid: string, songName: string, artist: string, albumName: string, kind: number
 		}
 
 		const [uploadedSong, {mutate, refetch}] = createResource<UploadedSong[] | undefined | null>(async ()=>{
 			let returnData: UploadedSong[] | null = [];
-			let res = await fetch(baseUrl + "getUploaded", {
+			let res = await fetch(baseUrl + "get-uploaded-with-meta", {
 				credentials: "include"
 			})
 			if (res.ok) {
-				let json = await res.json()
-
-				for (const received of json as UploadedSongReceivePayload[]) {
-					let res = await fetch(baseUrl + "getSingle?id=" + received.uuid)
-					let json = await res.json();
-					json.uuid = received.uuid;
-					returnData?.push(json);
-				}
+				returnData = await res.json();
 			} else {
 				returnData = null;
 			}
@@ -72,13 +65,13 @@ const Home = () => {
 								a.href = WebRoutes.instruNet + "/player?play="+item.uuid
 								document.body.appendChild(a);
 								a.click()
-							}}>{item.song_name}</td>
+							}}>{item.songName}</td>
 							<td onClick={()=>{
 								const a = document.createElement("a");
 								a.href = WebRoutes.instruNet + "/player?play="+item.uuid
 								document.body.appendChild(a);
 								a.click()
-							}}>{item.album_name}</td>
+							}}>{item.albumName}</td>
 							<td onClick={()=>{
 								const a = document.createElement("a");
 								a.href = WebRoutes.instruNet + "/player?play="+item.uuid
