@@ -15,7 +15,7 @@ const i18n: Ii18n = (await (async () => {
 )()) as unknown as Ii18n;
 
 let baseUrl:string = "https://andyxie.cn:8200/";
-if(baseUrl.indexOf("axcwg") !== -1){
+if(window.location.hostname.indexOf("axcwg") !== -1){
 	baseUrl = "https://api-instrunet.axcwg.cn";
 }
 // const baseUrl = "http://localhost:5052/";
