@@ -7,8 +7,8 @@ import {BsDownload} from "solid-icons/bs";
 import {BiRegularDownArrow, BiRegularUpArrow} from "solid-icons/bi";
 
 interface PlayInfo {
-	song_name: string,
-	album_name: string,
+	songName: string,
+	albumName: string,
 	artist: string,
 	kind: number
 }
@@ -43,7 +43,7 @@ const Player = () => {
 		setPlayUrl(baseUrl + params.play)
 	})
 	createEffect(()=>{
-		document.title = (playInfo()?.song_name ?? "") + i18n.Instrunet.DOC_TITLE.END;
+		document.title = (playInfo()?.songName ?? "") + i18n.Instrunet.DOC_TITLE.END;
 	})
 	fetch(baseUrl + "api/community/getvote?uuid=" + params.play).then(res => {
 		res.text().then(result => {
@@ -91,7 +91,7 @@ const Player = () => {
 		if (playInfo()) {
 			fetch(baseUrl + `lyric`, {
 				method: "POST", body: JSON.stringify({
-					name: playInfo()?.song_name, artist: playInfo()?.artist, albumName: playInfo()?.album_name
+					name: playInfo()?.songName, artist: playInfo()?.artist, albumName: playInfo()?.albumName
 				}), headers: {
 					"Content-Type": "application/json"
 				}
