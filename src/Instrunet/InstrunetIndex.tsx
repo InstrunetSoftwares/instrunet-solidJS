@@ -262,9 +262,12 @@ const InstrunetIndex: Component = () => {
 						</select>
 					</div>
 				</div>
-				<button onClick={Upload} disabled={uploading() && !uploadDone()}
+				<button  onClick={Upload} disabled={
+                    // uploading() && !uploadDone()
+                    true
+                }
 						class={"btn btn-primary min-w-full mt-5"}>{uploading() && !uploadDone() ?
-					<span class={"loading loading-spinner loading-md"}></span> : "上传"}</button>
+					<span class={"loading loading-spinner loading-md"}></span> : "暂不支持上传"}</button>
 					</div>
 					<input type="radio" name="tab_upload_type" class="tab" aria-label="网易云上传"></input>
 					<div class="tab-content border-base-300 p-6 ">
@@ -290,7 +293,7 @@ const InstrunetIndex: Component = () => {
 								})
 							}
 						</select>
-						<button onClick={()=>{
+						<button  onClick={()=>{
 							setUploadDone(null);
 							setUploadError(null);
 							setUploading(true); 
@@ -325,9 +328,12 @@ const InstrunetIndex: Component = () => {
 									})
 								}
 							})
-						}} disabled={uploading() && !uploadDone()}
+						}} disabled={
+                            true
+                            // uploading() && !uploadDone()
+                        }
 						class={"btn btn-primary min-w-full mt-5"}>{uploading() && !uploadDone() ?
-					<span class={"loading loading-spinner loading-md"}></span> : "上传"}</button>
+					<span class={"loading loading-spinner loading-md"}></span> : "上传暂时关闭"}</button>
 						</div>
 						
 					</div>
