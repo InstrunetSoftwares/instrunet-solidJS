@@ -6,7 +6,11 @@ import {viteSingleFile} from "vite-plugin-singlefile";
 import htmlMinifier from "vite-plugin-html-minifier";
 
 export default defineConfig({
-  plugins: [devtools(), solidPlugin(), tailwindcss(),viteSingleFile(), htmlMinifier({
+  plugins: [devtools(), solidPlugin(), tailwindcss(),viteSingleFile({
+	  overrideConfig: {
+		  base: "/"
+	  }
+  }), htmlMinifier({
 	  minify: true
   }), ],
   server: {
