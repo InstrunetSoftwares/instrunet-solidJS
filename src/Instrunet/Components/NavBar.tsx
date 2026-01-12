@@ -1,6 +1,5 @@
-import { BiRegularLeftArrowAlt } from "solid-icons/bi";
 import { baseUrl, i18n, WebRoutes } from "../../Singletons";
-import { Component, createSignal, JSX } from "solid-js";
+import { createSignal, JSX } from "solid-js";
 import { FiMenu } from "solid-icons/fi";
 
 const NavBar = ({Buttons}: {Buttons: JSX.Element}) => {

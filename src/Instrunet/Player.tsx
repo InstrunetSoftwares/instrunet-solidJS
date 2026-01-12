@@ -125,7 +125,7 @@ const Player = () => {
 											class={style.CardAnimation + " mb-4  md:size-70 sm:size-50 lg:size-90 xl:size-120 size-30 mx-auto bg-center bg-contain"}
 											style={{
 												"background-repeat": "no-repeat",
-												"background-image": `url('${baseUrl}getAlbumCover?id=${params.play}`
+												"background-image": `url('${baseUrl}getalbumcover?id=${params.play}`
 											}}
 										/>
 

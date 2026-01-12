@@ -11,10 +11,11 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@budarin/vite-plugin-webmanifest": "^1.0.23",
-    "solid-devtools": "^0.34.3",
+    "solid-devtools": "^0.34.4",
+    "terser": "^5.44.1",
     "typescript": "^5.7.2",
-    "vite": "^6.3.6",
+    "vite": "7.1.11",
+    "vite-plugin-html-minifier": "^1.0.5",
     "vite-plugin-solid": "^2.11.8"
   },
   "dependencies": {

@@ -107,7 +107,6 @@ const InstrunetIndex: Component = () => {
 		}
 	},450)
 
-	// @ts-ignore
 	return <>
 
 		<div class={"sm:mx-30 mx-15 pb-10"}>
@@ -155,7 +154,10 @@ const InstrunetIndex: Component = () => {
 
 				<h1 class={"text-5xl font-bold"}>{i18n.General.UPLOAD}</h1>
 				<div class="tabs tabs-box mt-5">
-					<input type="radio" name="tab_upload_type" class="tab" aria-label="文件上传" defaultChecked={true}></input>
+					{
+						// @ts-ignore
+						<input type="radio" name="tab_upload_type" class="tab" aria-label="文件上传" defaultChecked={true}></input>
+					}
 					<div class="tab-content border-base-300 p-6">
 						<div class={"grid grid-cols-1  lg:grid-cols-2 gap-5 "}>
 					<div class={"flex "} style={{"align-items": 'center'}}>
