@@ -179,7 +179,7 @@ const Player = () => {
 					</Show>
 				</div>
 				<div class="join w-full">
-					<a class={"btn grow join-item  btn-primary mt-2"} href={baseUrl + `download?id=${params.play}`}>{i18n.General.DOWNLOAD}</a>
+					<a class={"btn grow join-item  btn-primary mt-2"} href={baseUrl + `${params.play}`}>{i18n.General.DOWNLOAD}</a>
 					<button class={"btn grow join-item  btn-primary mt-2"} popovertarget="pitched-download" style={{"anchor-name": "--pitched-anchor"} as any}>{i18n.Instrunet.PITCHING + i18n.General.DOWNLOAD}</button>
 					<ul class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm" popover={true} id="pitched-download" style={{"position-anchor": "--pitched-anchor"} as any}>
 												<li>
