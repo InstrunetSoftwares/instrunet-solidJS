@@ -8,11 +8,7 @@ import {webmanifestPlugin} from "@budarin/vite-plugin-webmanifest";
 
 export default defineConfig({
 	base: "/",
-  plugins: [devtools(), solidPlugin(), tailwindcss(),viteSingleFile({
-	  overrideConfig: {
-		  base: "/"
-	  }
-  }), htmlMinifier({
+  plugins: [devtools(), solidPlugin(), tailwindcss(), htmlMinifier({
 	  minify: true
   }) ],
   server: {
