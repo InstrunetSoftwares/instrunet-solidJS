@@ -1,6 +1,6 @@
 import type { Component } from 'solid-js';
 import style from "./PageNavigator.module.css"
-import {i18n, WebRoutes} from "./Singletons";
+import {i18n, IsCloudflare, WebRoutes} from "./Singletons";
 import {Navigate} from "@solidjs/router";
 
 
@@ -11,7 +11,22 @@ const PageNavigator: Component = () => {
         <div class="max-w-screen">
           <h1 class="text-5xl font-bold py-10">AXCWG</h1>
 
+			<div onClick={()=>{
+
+			}} class={"card  bg-base-100 shadow-sm " + style.card} style={{"margin-bottom": "calc(var(--spacing) * 4)"}} >
+				<div class={"card-body"}>
+					<div class={"card-title"}>
+						{"嫌慢？"}
+					</div>
+					<p>
+						{"切换至另一条线路"}
+					</p>
+					<a class={"btn "} href={IsCloudflare() ? "https://andyxie.cn:4000" : "https://instrunet.axcwg.cn"}>{i18n.General.ACCESS}</a>
+				</div>
+			</div>
           <div class={"grid grid-cols-1 sm:grid-cols-2 gap-4"}>
+
+
               <CardThisPage href={WebRoutes.instruNet} title={i18n.Instrunet.TITLE} info={i18n.Instrunet.DESC}/>
 
             {/*<CardThisPage href={WebRoutes.speechToText} title={i18n.STT.TITLE} info={i18n.STT.DESC}/>*/}
@@ -24,6 +39,8 @@ const PageNavigator: Component = () => {
 
 
 
+
+
         </div>
       </div>
     </div>
@@ -32,7 +49,7 @@ const PageNavigator: Component = () => {
 const CardThisPage = ({title, info, href}: {title:string, info: string, href?: string })=> {
   return <div onClick={()=>{
 
-  }} class={"card bg-base-100 shadow-sm sm:max-w-100  " + style.card}>
+  }} class={"card bg-base-100 shadow-sm sm:max-w-100  " + style.card} >
     <div class={"card-body"}>
       <div class={"card-title"}>
         {title}

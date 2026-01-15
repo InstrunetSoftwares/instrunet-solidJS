@@ -3,6 +3,7 @@ import {baseUrl, i18n, WebRoutes, white} from "../Singletons";
 import style from "../PageNavigator.module.css"
 import { useSearchParams } from "@solidjs/router";
 import { Kind } from "../Singletons";
+import {BsSearch} from "solid-icons/bs";
 
 const Search = () => {
 
@@ -79,72 +80,94 @@ const Search = () => {
 		prevScrollTop = st <= 0 ? 0 : st; // for Mobile or negative scrolling
 	}, false);
 
-	// TODO ALBUM COVER SYSTEM HAS TO BE CHANGED COMPLETELY. THIS IS HORSESHIT. HOW TF DID I WROTE THIS WITH OUT ASKING MYSELF?
 	return <>
+		<div class={"mt-20 mb-20 mx-5 flex flex-col gap-4"}>
+			<div class={"flex gap-1 mx-auto w-100"}>
+				<input id={"search-input"} value={p.p}  class={"input grow "} onKeyDown={(e)=>{
+					if(e.key === "Enter") {
+						document.getElementById("search-anchor")?.click()
+					}
+				}}/>
+				<a id={"search-anchor"} class={"btn"} onClick={()=> {
+					const a = document.createElement("a");
+					a.href = WebRoutes.instruNet + `/search?p=${(document.getElementById("search-input") as HTMLInputElement)?.value ?? p.p}`;
+					document.body.appendChild(a);
+					a.click();
+				}
 
-		{
-			searchInfo() ?
-				<>
-					<div
-						class={"mt-20 mb-20 grid md:grid-cols-2 grid-cols-1  gap-4 mx-5 md:mx-auto md:max-w-3/4 xl:max-w-1/2 "}>
-						{
-							searchInfo()?.slice((currentPage() - 1) * PER_PAGE_CONST, (currentPage()) * PER_PAGE_CONST).map((item, index) => {
+
+				}>
+					{/*<BsSearch/> // Icon does not show. */}
+					搜索
+				</a>
+
+			</div>
+
+			{
+				searchInfo() ?
+					<>
+						<div
+							class={"grid md:grid-cols-2 grid-cols-1  gap-4  md:mx-auto md:max-w-3/4 xl:max-w-1/2 "}>
+							{
+								searchInfo()?.slice((currentPage() - 1) * PER_PAGE_CONST, (currentPage()) * PER_PAGE_CONST).map((item, index) => {
 
 
-								return <a class={`card bg-base-200 ${style.card}`} href={WebRoutes.instruNet + "/player?play="+item.uuid}>
+									return <a class={`card bg-base-200 ${style.card}`} href={WebRoutes.instruNet + "/player?play="+item.uuid}>
 
 
-									<div class={"card-body flex flex-row"} style={{ "align-items": "center" }}>
-										{
-											<img class={"h-20 aspect-auto rounded-sm mx-auto"}
-												src={baseUrl + `getAlbumCover?id=${item.uuid}`} />
-										}
-										<div class={"grow ml-2"}>
-											<div class={"card-title text-3xl"}>{item.song_name}</div>
-											<div class={"divider mt-0 mb-0"}></div>
-											<span>{item.album_name} - {item.artist} - {Kind[item.kind]}</span>
+										<div class={"card-body flex flex-row"} style={{ "align-items": "center" }}>
+											{
+												<img class={"h-20 aspect-auto rounded-sm mx-auto"}
+													 src={baseUrl + `getAlbumCover?id=${item.uuid}`} />
+											}
+											<div class={"grow ml-2"}>
+												<div class={"card-title text-3xl"}>{item.song_name}</div>
+												<div class={"divider mt-0 mb-0"}></div>
+												<span>{item.album_name} - {item.artist} - {Kind[item.kind]}</span>
+											</div>
+
 										</div>
 
-									</div>
+
+									</a>
 
 
-								</a>
+								})
+							}
+						</div>
+						<div ref={refBottomBar!} class={`fixed px-2 glass overflow-y-auto min-w-screen max-w-screen  py-4 bottom-0 ${style["bottom-nav"]}`}>
+							<div class={"mx-auto pl-3 pr-3 w-fit"}>
+								<div class="join  mx-auto">
+									{
+										<For each={(() => {
 
+											let numsOfPages = Math.trunc(searchInfo()?.length! / PER_PAGE_CONST) + 1
+											let arr: number[] = [];
+											for (let i = 1; i <= numsOfPages; i++) {
+												arr.push(i);
+											}
+											return arr
+										})()}>
+											{(item) => <button class="join-item btn btn-square" onClick={() => {
+												setCurrentPage(item)
+											}}>{item}</button>}
+										</For>
 
-							})
-						}
-					</div>
-					<div ref={refBottomBar!} class={`fixed px-2 glass overflow-y-auto min-w-screen max-w-screen  py-4 bottom-0 ${style["bottom-nav"]}`}>
-						<div class={"mx-auto pl-3 pr-3 w-fit"}>
-							<div class="join  mx-auto">
-								{
-									<For each={(() => {
+									}
 
-										let numsOfPages = Math.trunc(searchInfo()?.length! / PER_PAGE_CONST) + 1
-										let arr: number[] = [];
-										for (let i = 1; i <= numsOfPages; i++) {
-											arr.push(i);
-										}
-										return arr
-									})()}>
-										{(item) => <button class="join-item btn btn-square" onClick={() => {
-											setCurrentPage(item)
-										}}>{item}</button>}
-									</For>
-
-								}
-
+								</div>
 							</div>
+
 						</div>
 
+					</> : <div class={"hero min-h-[calc(100vh-14rem)]"}>
+						<div class={"hero-content"}>
+							<div class={"loading loading-spinner loading-x scale-250"}></div>
+						</div>
 					</div>
+			}
+		</div>
 
-				</> : <div class={"hero min-h-[calc(100vh-4rem)]"}>
-					<div class={"hero-content"}>
-						<div class={"loading loading-spinner loading-x scale-250"}></div>
-					</div>
-				</div>
-		}
 
 
 	</>
