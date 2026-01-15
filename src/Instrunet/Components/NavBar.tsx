@@ -1,4 +1,4 @@
-import { baseUrl, i18n, WebRoutes } from "../../Singletons";
+import {baseUrl, i18n, IsCloudflare, WebRoutes} from "../../Singletons";
 import { createSignal, JSX } from "solid-js";
 import { FiMenu } from "solid-icons/fi";
 
@@ -101,6 +101,8 @@ const BunchOfButtons = () => {
 		<NavBarButtonInSig className="text-error" href={"https://afdian.com/a/re_xiey0"}>{i18n.Instrunet.DONATE}</NavBarButtonInSig>
 		<NavBarButtonInSig href={"https://andyxie.cn:5000/"}>{i18n.Instrunet.FORUM}</NavBarButtonInSig>
 		<NavBarButtonInSig href={"https://github.com/InstrunetSoftwares"}>{i18n.Instrunet.GIT}</NavBarButtonInSig>
-		<NavBarButtonInSig href={WebRoutes.instruNet + "/secret"}>{i18n.Instrunet.SECRET}</NavBarButtonInSig></>
+		<NavBarButtonInSig href={WebRoutes.instruNet + "/secret"}>{i18n.Instrunet.SECRET}</NavBarButtonInSig>
+		<NavBarButtonInSig href={IsCloudflare() ? "https://andyxie.cn:4000" : "https://instrunet.axcwg.cn"}>加速（？）站点</NavBarButtonInSig>
+	</>
 }
 export { NavBar, NavBarButtonInSig, BunchOfButtons };
