@@ -8,9 +8,9 @@ import {webmanifestPlugin} from "@budarin/vite-plugin-webmanifest";
 
 export default defineConfig({
 	base: "/",
-  plugins: [devtools(), solidPlugin(), tailwindcss(), htmlMinifier({
+  plugins: [webmanifestPlugin(), devtools(), solidPlugin(), tailwindcss(), htmlMinifier({
 	  minify: true
-  }) ],
+  }), ],
   server: {
     port: 3000,
   },
