@@ -28,7 +28,8 @@ const Kind: string[] = [
 	"贝斯",
 	"鼓",
 	"和声人声",
-	"吉他"
+	"吉他",
+	"仅和声"
 ]
 
 // export async function readAsDataUrlAsync(file: Blob) {
@@ -70,6 +71,7 @@ const WebRoutes = {
 	instruNet: "/instrunet",
 	speechToText: "/speech-to-text",
 	unlockMusic: "/unlock-music",
+
 }
 function immutableRemoveAt(array: any[], index: number, length: number): any[] {
 	let arr = [...array]

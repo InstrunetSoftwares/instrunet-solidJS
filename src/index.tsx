@@ -29,6 +29,7 @@ const InstrunetPlaylist = lazy(()=>import("./Instrunet/Playlist"))
 const UnlockMusic = lazy(()=>import("./UnlockMusic"))
 const Register = lazy(()=>import("./Instrunet/Register"));
 const SecretPage =  lazy(() => import("./Instrunet/SecretPage"))
+const UpdateLog = lazy(() => import("./Instrunet/UpdateLog"))
 render(() => {
 	const SharedButtons = <BunchOfButtons/>;
 	const GlobalNavBar = <NavBar Buttons={SharedButtons}/>
@@ -100,6 +101,9 @@ render(() => {
 				}></Route>
 				<Route path={"/playlist/:playlistuuid"} component={() => <Wrapper Content={InstrunetPlaylist} Navbar={true}/>}/>
 				<Route path={"/secret"} component={()=><Wrapper Content={SecretPage} Navbar={false}/>}/>
+				<Route path={"/updatelog"} component={()=><>
+				<Wrapper Content={UpdateLog} Navbar={true}/>
+				</>}/>
 			</>
 		})()}/>
 		<Route path={"/unlock-music"} component={() => <Wrapper Content={UnlockMusic} Navbar={false}/>}/>
