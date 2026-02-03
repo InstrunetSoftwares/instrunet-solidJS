@@ -22,7 +22,8 @@ const Instrunet = {
 		"Bass",
 		"Drums",
 		"Harmony Vocal",
-		"Guitar"
+		"Guitar",
+		"Harmony Only"
 	],
 	KIND_SELF: "Type",
 	DOC_TITLE: {

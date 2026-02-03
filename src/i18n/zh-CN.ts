@@ -23,7 +23,8 @@ const Instrunet  = {
 		"贝斯",
 		"鼓",
 		"和声人声",
-		"吉他"
+		"吉他",
+		"仅和声"
 	],
 	KIND_SELF: "种类",
 	DOC_TITLE:{
