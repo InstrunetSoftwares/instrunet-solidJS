@@ -23,6 +23,7 @@ const QueuePage: Component = () => {
 		}
 	})
 	return <div class={"bg-base-100  mx-auto mt-10"}>
+		<div class={"text-sm text-center mb-3 text-gray-400"}>请等待队列中任务完成后迈步搜索寻找上传后的歌曲</div>
 		<table class={"table-xs sm:min-w-150 border border-base-content/10"}>
 			<thead>
 				<tr>

@@ -4,10 +4,11 @@ import style from "../PageNavigator.module.css"
 import { useSearchParams } from "@solidjs/router";
 import { Kind } from "../Singletons";
 import {BsSearch} from "solid-icons/bs";
+import {createMediaQuery, makeMediaQueryListener} from "@solid-primitives/media";
 
 const Search = () => {
 
-	const PER_PAGE_CONST = 50;
+	let [perPage, setPerPage] = createSignal(50);
 
 	interface Searched {
 		uuid: string,
@@ -20,12 +21,20 @@ const Search = () => {
 
 	const [p, setP] = useSearchParams();
 	const [searchInfo, setSearchInfo] = createSignal<Searched[] | null>(null)
-	const [searchError, setSearchError] = createSignal<string>();
 	const [currentPage, setCurrentPage] = createSignal<number>(1);
-	const [pageNumArr, setPageNumArr] = createSignal<number[]>([]);
 	const [hide, setHide] = createSignal(false);
 	document.title = i18n.Instrunet.SEARCH_TITLE.START+(p ? p.p ? p.p as string : i18n.Instrunet.SEARCH_TITLE.ZENBU : i18n.Instrunet.SEARCH_TITLE.ZENBU) + i18n.Instrunet.SEARCH_TITLE.END
+	const status = createMediaQuery("(width >= 48rem)")
+	let callback = (e: MediaQueryListEvent | { matches: boolean })=>{
+		if(!e?.matches){
+			setPerPage(20);
+		}else{
+			setPerPage(50)
+		}
+	};
+	callback({matches: status()})
 
+	makeMediaQueryListener("(width >= 48rem)", callback)
 	createEffect(() => {
 		setSearchInfo(null)
 		fetch(baseUrl + "search_api", {
@@ -37,23 +46,9 @@ const Search = () => {
 		}).then(res => {
 			if (res.ok) {
 				res.json().then(j => setSearchInfo(j))
-			} else {
-				setSearchError(`${res.status} ${res.statusText}`)
 			}
 		})
 	}, p)
-
-	createEffect(() => {
-		if (searchInfo()) {
-			let numsOfPages = Math.trunc(searchInfo()?.length ?? 0 / PER_PAGE_CONST) + 1
-			let arr: number[] = [];
-			for (let i = 1; i <= numsOfPages; i++) {
-				arr.push(i);
-			}
-			setPageNumArr(arr);
-		}
-
-	}, [searchInfo])
 	createEffect(() => {
 		if (hide()) {
 			refBottomBar!.style.bottom = "-72px"
@@ -81,8 +76,8 @@ const Search = () => {
 	}, false);
 
 	return <>
-		<div class={"mt-20 mb-20 mx-5 flex flex-col gap-4"}>
-			<div class={"flex gap-1 mx-auto w-100"}>
+		<div class={"mt-20 mb-20 flex flex-col gap-4"}>
+			<div class={"flex gap-1 mx-auto "}>
 				<input id={"search-input"} value={p.p}  class={"input grow "} onKeyDown={(e)=>{
 					if(e.key === "Enter") {
 						document.getElementById("search-anchor")?.click()
@@ -107,9 +102,9 @@ const Search = () => {
 				searchInfo() ?
 					<>
 						<div
-							class={"grid md:grid-cols-2 grid-cols-1  gap-4  md:mx-auto md:max-w-3/4 xl:max-w-1/2 "}>
+							class={"grid md:grid-cols-2 grid-cols-1  gap-4  mx-auto max-w-11/12 md:max-w-3/4 xl:max-w-1/2 "}>
 							{
-								searchInfo()?.slice((currentPage() - 1) * PER_PAGE_CONST, (currentPage()) * PER_PAGE_CONST).map((item, index) => {
+								searchInfo()?.slice((currentPage() - 1) * perPage(), (currentPage()) * perPage()).map((item, index) => {
 
 
 									return <a class={`card bg-base-200 ${style.card}`} href={WebRoutes.instruNet + "/player?play="+item.uuid}>
@@ -135,13 +130,13 @@ const Search = () => {
 								})
 							}
 						</div>
-						<div ref={refBottomBar!} class={`fixed px-2 glass overflow-y-auto min-w-screen max-w-screen  py-4 bottom-0 ${style["bottom-nav"]}`}>
+						<div ref={refBottomBar!} class={`fixed px-2 glass overflow-y-scroll min-w-screen max-w-screen  py-4 bottom-0 ${style["bottom-nav"]}`}>
 							<div class={"mx-auto pl-3 pr-3 w-fit"}>
 								<div class="join  mx-auto">
 									{
 										<For each={(() => {
 
-											let numsOfPages = Math.trunc(searchInfo()?.length! / PER_PAGE_CONST) + 1
+											let numsOfPages = Math.trunc(searchInfo()?.length! / perPage()) + 1
 											let arr: number[] = [];
 											for (let i = 1; i <= numsOfPages; i++) {
 												arr.push(i);

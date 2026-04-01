@@ -113,8 +113,6 @@ const InstrunetIndex: Component = () => {
 
 
 			{/* Upper Part */}
-			<h1 class={"text-6xl text-red-600"}>通知</h1>
-			<p class={"text-2xl"}>三月二十二日晚将因为暂时的技术性调整暂时闭站约一两天，最早将于周一晚或周二恢复。届时若有紧急情况可联系QQ 3095864740。</p>
 			<h1 class={"text-5xl mt-[35vh] font-light text-center  mb-5 "}><span class={"relative"}>{i18n.Instrunet.SLOGAN}<span ref={blink}
 				class={`absolute right-[-1rem] ${style.blink}`}>_</span></span></h1>
 			<div class={"flex md:max-w-1/2 max-w-full mx-auto flex-row gap-2"}>
