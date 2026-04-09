@@ -116,7 +116,7 @@ const InstrunetIndex: Component = () => {
 			<h1 class={"text-5xl mt-[35vh] font-light text-center  mb-5 "}><span class={"relative"}>{i18n.Instrunet.SLOGAN}<span ref={blink}
 				class={`absolute right-[-1rem] ${style.blink}`}>_</span></span></h1>
 			<div class={"flex md:max-w-1/2 max-w-full mx-auto flex-row gap-2"}>
-				<input class={"input grow-1"} placeholder={i18n.General.SEARCH} value={search()} onInput={(e)=>{
+				<input class={"input grow-1"} style={{"font-size": "16px"}} placeholder={i18n.General.SEARCH} value={search()} onInput={(e)=>{
 					setSearch(e.target.value)
 				}} onKeyDown={(e)=>{
 					if(e.key === "Enter") {

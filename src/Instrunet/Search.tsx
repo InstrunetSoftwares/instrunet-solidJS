@@ -78,7 +78,7 @@ const Search = () => {
 	return <>
 		<div class={"mt-20 mb-20 flex flex-col gap-4"}>
 			<div class={"flex gap-1 mx-auto "}>
-				<input id={"search-input"} value={p.p}  class={"input grow "} onKeyDown={(e)=>{
+				<input style={{"font-size": "16px"}} id={"search-input"} value={p.p}  class={"input grow "} onKeyDown={(e)=>{
 					if(e.key === "Enter") {
 						document.getElementById("search-anchor")?.click()
 					}
