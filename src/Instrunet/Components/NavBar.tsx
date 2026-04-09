@@ -1,5 +1,5 @@
 import {baseUrl, i18n, IsCloudflare, WebRoutes} from "../../Singletons";
-import { createSignal, JSX } from "solid-js";
+import {Component, createSignal, For, JSX} from "solid-js";
 import { FiMenu } from "solid-icons/fi";
 
 const NavBar = ({Buttons}: {Buttons: JSX.Element}) => {
@@ -92,7 +92,7 @@ const NavBarButtonInSig = ({ children, href, className }: {
 
 	>{children}</a>
 }
-const BunchOfButtons = () => {
+const BunchOfButtons = (prop : {ExtraButtons?: JSX.Element[] | null}) => {
 	
 	return <><NavBarButtonInSig href={WebRoutes.instruNet}>{i18n.Instrunet.TITLE}</NavBarButtonInSig>
 		{/*<NavBarButtonInSig href={WebRoutes.instruNet + "/search"}>{i18n.Instrunet.ALL}</NavBarButtonInSig>*/}
@@ -104,6 +104,15 @@ const BunchOfButtons = () => {
 		<NavBarButtonInSig href={WebRoutes.instruNet + "/secret"}>{i18n.Instrunet.SECRET}</NavBarButtonInSig>
 		<NavBarButtonInSig href={IsCloudflare() ? "https://andyxie.cn:4000" : "https://instrunet.axcwg.cn"}>加速(?)站点</NavBarButtonInSig>
 		<NavBarButtonInSig href={WebRoutes.instruNet + "/updatelog"}>更新日志</NavBarButtonInSig>
+		<For each={prop.ExtraButtons}>
+			{
+				(ExtraButton, i)=>{
+					return <>
+					{ExtraButton}
+					</>
+				}
+			}
+		</For>
 	</>
 }
 export { NavBar, NavBarButtonInSig, BunchOfButtons };

@@ -5,7 +5,8 @@ import 'solid-devtools';
 import './index.css';
 import { Component, lazy } from "solid-js";
 import { Route, Router } from "@solidjs/router";
-import { BunchOfButtons, NavBar } from "./Instrunet/Components/NavBar";
+import {BunchOfButtons, NavBar, NavBarButtonInSig} from "./Instrunet/Components/NavBar";
+
 
 const root = document.getElementById('root');
 
@@ -31,7 +32,8 @@ const Register = lazy(()=>import("./Instrunet/Register"));
 const SecretPage =  lazy(() => import("./Instrunet/SecretPage"))
 const UpdateLog = lazy(() => import("./Instrunet/UpdateLog"))
 render(() => {
-	const SharedButtons = <BunchOfButtons/>;
+	const ExtraButtons = null;
+	const SharedButtons = <BunchOfButtons ExtraButtons={ExtraButtons}/>;
 	const GlobalNavBar = <NavBar Buttons={SharedButtons}/>
 	const LoadingScreen = ({fullHeight}: { fullHeight?:boolean })=> {
 		return <div class={`hero bg-base-200 ${fullHeight ?"min-h-[100vh]" : "min-h-[calc(100vh-4rem)]"} `}>
@@ -43,6 +45,7 @@ render(() => {
 		</div>
 	}
 	const Wrapper = ({Content, Navbar}: { Content: Component, Navbar :boolean }) => {
+
 		return <>
 			<div class="drawer">
 				<input id="my-drawer-3" type="checkbox" class="drawer-toggle"/>
@@ -58,7 +61,7 @@ render(() => {
 						<a class="btn btn-ghost text-xl font-medium" href={"/"}>
 							菜单
 						</a>
-						<BunchOfButtons/>
+						<BunchOfButtons ExtraButtons={ExtraButtons}/>
 					</ul>
 				</div>
 			</div>
@@ -67,10 +70,19 @@ render(() => {
 
 	return <Router>
 		<Route path={"/"} component={AXCWGIndex}/>
-		<Route path={"/instrunet"} children={(() => {
+		<Route path={"/instrunet"} component={(p)=>{
 			return <>
+			         {p.children}
+				</>
+		}} children={(() => {
+			return <>
+
 				<Route path="/" component={() => {
-					return <Wrapper Content={InstrunetIndex} Navbar={true}/>
+
+					return <>
+						<Wrapper Content={InstrunetIndex} Navbar={true}/>
+					</>
+
 				}}></Route>
 				<Route path={"/queue"} component={() => {
 					return <Wrapper Content={InstrunetQueuePage} Navbar={true}/>
