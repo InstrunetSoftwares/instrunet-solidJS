@@ -32,7 +32,7 @@ const PageNavigator: Component = () => {
             {/*<CardThisPage href={WebRoutes.speechToText} title={i18n.STT.TITLE} info={i18n.STT.DESC}/>*/}
             <CardThisPage href={"https://andyxie.cn:5000"} title={i18n.Sanctuary.TITLE} info={i18n.Sanctuary.DESC}/>
             <CardThisPage href={WebRoutes.unlockMusic} title={i18n.MusicUnlock.TITLE} info={i18n.MusicUnlock.DESC}/>
-            <CardThisPage href={"https://andyxie.cn:4001"} title={i18n.JustTalk.TITLE} info={i18n.JustTalk.DESC}/>
+            {/*<CardThisPage href={"https://andyxie.cn:4001"} title={i18n.JustTalk.TITLE} info={i18n.JustTalk.DESC}/>*/}
 
           </div>
 

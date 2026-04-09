@@ -10,7 +10,7 @@ const Instrunet  = {
 	DONATE: "打赏",
 	FORUM: "反馈",
 	GIT: "GitHub",
-	SECRET: "网易下载",
+	SECRET: "网易云下载",
 
 	COVER: "封面",
 	SONG_NAME: "歌名",
