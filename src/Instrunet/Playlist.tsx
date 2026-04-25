@@ -1,4 +1,4 @@
-import {useParams, useSearchParams} from "@solidjs/router";
+import {useLocation, useParams, useSearchParams} from "@solidjs/router";
 import {createEffect, createResource, createSignal, JSX, Show} from "solid-js";
 import {baseUrl, i18n, immutableInsertBefore, immutableRemoveAt, Kind} from "../Singletons";
 import PlayerComponent from "./Components/PlayerComponent";
@@ -58,8 +58,11 @@ const Playlist = () => {
 	const [playCurrentIndex, setPlayCurrentIndex] = createSignal<number>(0);
 	const [playUrl, setPlayUrl] = createSignal<string>("");
 	const [popOpened, setPopOpened] = createSignal<boolean>(false);
-
-
+	const [downloadingPlaylist, setDownloadingPlaylist] = createSignal<boolean>(false);
+	const location = useLocation();
+	createEffect(()=>{
+		setDownloadingPlaylist(!location.pathname.startsWith("/instrunet/playlist/"))
+	})
 	createEffect(() => {
 		if (playlistInfo()) {
 			setPlayCurrentSong(playlistInfo()!.content![playCurrentIndex()])
@@ -310,28 +313,37 @@ const Playlist = () => {
 
 				</div>
 				<div class="max-h-full lg:max-h-170 lg:overflow-y-scroll">
-						<button class={"btn btn-error w-full mb-3"} onClick={(e) => {
-							if (e.currentTarget.innerText === i18n.General.DEL_CONFIRM) {
-								fetch(baseUrl + "remove-playlist", {
-									method: "POST",
-									credentials: "include",
-									headers: {
-										"Content-Type": "application/json"
-									},
-									body: JSON.stringify({
-										playlistuuid: params.playlistuuid,
-									})
-								}).then(res => {
-										if (res.ok) {
-											window.history.back();
+					<div class={"flex flex-row gap-2"}>
+						<button class={"btn btn-primary grow mb-3"} onClick={()=>{
+							window.location.replace(baseUrl + `playlist-cue?uuid=${playlistInfo()?.playlistuuid}`)  ;
+						}}><Show when={downloadingPlaylist()} fallback={"下载此歌单"}><div class={"loading loading-spinner"}></div></Show></button>
+						<Show when={playlistInfo()?.owner === localStorage.getItem("uuid")}>
+							<button class={"btn btn-error grow mb-3"} onClick={(e) => {
+								if (e.currentTarget.innerText === i18n.General.DEL_CONFIRM) {
+									fetch(baseUrl + "remove-playlist", {
+										method: "POST",
+										credentials: "include",
+										headers: {
+											"Content-Type": "application/json"
+										},
+										body: JSON.stringify({
+											playlistuuid: params.playlistuuid,
+										})
+									}).then(res => {
+											if (res.ok) {
+												window.history.back();
+											}
 										}
-									}
-								)
-							}else {
-								e.currentTarget.innerText = i18n.General.DEL_CONFIRM
-							}
-						}}>{i18n.General.DEL}
-						</button>
+									)
+								}else {
+									e.currentTarget.innerText = i18n.General.DEL_CONFIRM
+								}
+							}}>{i18n.General.DEL}
+							</button>
+						</Show>
+					</div>
+
+
 						<table class="table  table-sm w-full border-2 border-base-content/10">
 							<thead>
 							<tr>
