@@ -14,7 +14,7 @@ const Playlist = () => {
 		owner: string,
 		playlistuuid: string,
 		content: PlayInfo[],
-		private: string,
+		private: boolean,
 		title: string,
 		ownerName: string
 	}
@@ -260,9 +260,31 @@ const Playlist = () => {
 
 						 }}>
 					</div>
+					<Show when={playlistInfo()?.owner === localStorage.getItem("uuid")}>
+						<div class={"flex mx-auto mt-4 gap-3"} >
+							<input id={"w223"} type={"checkbox"} class={"toggle checked:bg-primary bg-gray-600 border-0"} onInput={(e)=>{
+								const value = {
+									...playlistInfo()!,
+									private: (e.target.checked)
+								};
+								fetch(baseUrl + "upload-playlist", {
+									method: "POST",
+									credentials: "include",
+									headers: {
+										"Content-Type": "application/json"
+									},
+									body: JSON.stringify(value)
+								}).then(() => {
+									mutate(value);
+								});
+							}} checked={Boolean(playlistInfo()?.private)} /> <label class={"my-auto"} for={"w223"}>不公开</label>
+						</div>
 
+					</Show>
 					{
-						playlistInfo()?.owner === localStorage.getItem("uuid") ? <><input title={"标题不可为空"}
+						playlistInfo()?.owner === localStorage.getItem("uuid") ? <>
+
+								<input title={"标题不可为空"}
 																						  required minlength={1}
 																						  onfocusout={(e) => {
 																							  if (!e.target.checkValidity()) {
