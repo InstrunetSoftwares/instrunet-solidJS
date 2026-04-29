@@ -327,7 +327,7 @@ const Playlist = () => {
 					</Show>
 
 				</div>
-				<div class="max-h-full lg:max-h-170 lg:overflow-y-scroll">
+				<div>
 					<div class={"flex flex-row gap-2"}>
 						<button class={"btn btn-primary grow mb-3"} onClick={()=>{
 							window.location.replace(baseUrl + `playlist-cue?uuid=${playlistInfo()?.playlistuuid}`)  ;
@@ -358,104 +358,106 @@ const Playlist = () => {
 						</Show>
 					</div>
 
+						<div class={"border-2 border-base-content/10 lg:overflow-y-scroll max-h-full lg:max-h-170"} style={{"overflow-x": "clip"}}>
+							<table class="table  table-sm w-full ">
+								<thead>
+								<tr>
+									<td class={"lg:table-cell hidden"}>{i18n.Instrunet.COVER}</td>
+									<td>{i18n.Instrunet.SONG_NAME}</td>
+									<td>{i18n.Instrunet.ALBUM_NAME}</td>
+									<td>{i18n.Instrunet.ARTIST}</td>
+									<td>{i18n.Instrunet.KIND_SELF}</td>
+									{playlistInfo()?.owner === localStorage.getItem("uuid") ? <td>{i18n.General.ACTION}</td> : null}
 
-						<table class="table  table-sm w-full border-2 border-base-content/10">
-							<thead>
-							<tr>
-								<td class={"lg:table-cell hidden"}>{i18n.Instrunet.COVER}</td>
-								<td>{i18n.Instrunet.SONG_NAME}</td>
-								<td>{i18n.Instrunet.ALBUM_NAME}</td>
-								<td>{i18n.Instrunet.ARTIST}</td>
-								<td>{i18n.Instrunet.KIND_SELF}</td>
-								{playlistInfo()?.owner === localStorage.getItem("uuid") ? <td>{i18n.General.ACTION}</td> : null}
+								</tr>
+								</thead>
+								<tbody>
 
-							</tr>
-							</thead>
-							<tbody>
+								{
+									playlistInfo()?.content ? playlistInfo()!.content.map((item, index) => {
+										return <tr classList={{["bg-base-300"]: playCurrentIndex() === index}}
+										           class={"hover:bg-base-200"}>
+											<td class={"lg:table-cell hidden"} onClick={() => {
+												setPlayCurrentIndex(index)
+											}}>{playlistInfo()?.content[index] ?
+												<div class="lg:w-15 lg:h-15 w-10 h-10 border-1 bg-center bg-contain" style={{
+													"background-image": `url('${baseUrl + "getAlbumCover?id=" + playlistInfo()?.content[index].uuid}')`,
+													"background-repeat": "no-repeat"
+												}}>
+												</div> : null} </td>
+											<td onClick={() => {
+												setPlayCurrentIndex(index)
+												ParamHook()
+											}}>{item.songName}</td>
+											<td onClick={() => {
+												setPlayCurrentIndex(index)
+												ParamHook()
 
-							{
-								playlistInfo()?.content ? playlistInfo()!.content.map((item, index) => {
-									return <tr classList={{["bg-base-300"]: playCurrentIndex() === index}}
-											   class={"hover:bg-base-200"}>
-										<td class={"lg:table-cell hidden"} onClick={() => {
-											setPlayCurrentIndex(index)
-										}}>{playlistInfo()?.content[index] ?
-											<div class="lg:w-15 lg:h-15 w-10 h-10 border-1 bg-center bg-contain" style={{
-												"background-image": `url('${baseUrl + "getAlbumCover?id=" + playlistInfo()?.content[index].uuid}')`,
-												"background-repeat": "no-repeat"
-											}}>
-											</div> : null} </td>
-										<td onClick={() => {
-											setPlayCurrentIndex(index)
-											ParamHook()
-										}}>{item.songName}</td>
-										<td onClick={() => {
-											setPlayCurrentIndex(index)
-											ParamHook()
+											}}>{item.albumName}</td>
+											<td onClick={() => {
+												setPlayCurrentIndex(index)
+												ParamHook()
 
-										}}>{item.albumName}</td>
-										<td onClick={() => {
-											setPlayCurrentIndex(index)
-											ParamHook()
+											}}>{item.artist}</td>
+											<td onClick={() => {
+												setPlayCurrentIndex(index)
+												ParamHook()
 
-										}}>{item.artist}</td>
-										<td onClick={() => {
-											setPlayCurrentIndex(index)
-											ParamHook()
-
-										}}>{Kind[item.kind]}</td>
-										{playlistInfo()?.owner === localStorage.getItem("uuid") ? <td>
-											<button class="btn bg-red-500 btn-square" onClick={() => {
-												const value = {...playlistInfo()!, content: immutableRemoveAt(playlistInfo()!.content, index, 1)};
-												fetch(baseUrl + "upload-playlist", {
-													method: "POST", credentials: "include", headers: {
-														"Content-Type": "application/json"
-													}, body: JSON.stringify(value)
-												}).then(()=> mutate(value))
-
-
-											}}><AiOutlineDelete/></button>
-											{
-												playlistInsertInfo().inserting ?
-													<button class={"btn btn-primary btn-square"} onClick={(e) => {
-														setPlaylistInsertInfo({
-															...playlistInsertInfo(), beforeB: index, inserting: false
-														})
-
-														const value = {...playlistInfo()!, content: immutableInsertBefore(playlistInfo()!.content, playlistInsertInfo().a!, playlistInsertInfo().beforeB!)
-														};
-														fetch(baseUrl + "upload-playlist", {
-															method: "POST", credentials: "include", headers: {
-																"Content-Type": "application/json"
-															}, body: JSON.stringify(value)
-														}).then(()=>{
-															mutate(value);
-														})
-													}}>{i18n.General.FRONT}</button> :
-													<button class={"btn btn-square"} onClick={(e) => {
-														setPlaylistInsertInfo({
-															...playlistInsertInfo(), a: index, inserting: true
-														})
-													}}><VsInsert/></button>
-											}
-
-										</td> : null}
+											}}>{Kind[item.kind]}</td>
+											{playlistInfo()?.owner === localStorage.getItem("uuid") ? <td>
+												<button class="btn bg-red-500 btn-square" onClick={() => {
+													const value = {...playlistInfo()!, content: immutableRemoveAt(playlistInfo()!.content, index, 1)};
+													fetch(baseUrl + "upload-playlist", {
+														method: "POST", credentials: "include", headers: {
+															"Content-Type": "application/json"
+														}, body: JSON.stringify(value)
+													}).then(()=> mutate(value))
 
 
-									</tr>
-								}) : null
-							}
-							{
-								playlistInfo()?.owner === localStorage.getItem("uuid") ? <tr>
-									<td colspan={6} class={"text-center"} onClick={() => {
-										setPopOpened(true)
-									}}>+
-									</td>
-								</tr> : null
-							}
+												}}><AiOutlineDelete/></button>
+												{
+													playlistInsertInfo().inserting ?
+														<button class={"btn btn-primary btn-square"} onClick={(e) => {
+															setPlaylistInsertInfo({
+																...playlistInsertInfo(), beforeB: index, inserting: false
+															})
 
-							</tbody>
-						</table>
+															const value = {...playlistInfo()!, content: immutableInsertBefore(playlistInfo()!.content, playlistInsertInfo().a!, playlistInsertInfo().beforeB!)
+															};
+															fetch(baseUrl + "upload-playlist", {
+																method: "POST", credentials: "include", headers: {
+																	"Content-Type": "application/json"
+																}, body: JSON.stringify(value)
+															}).then(()=>{
+																mutate(value);
+															})
+														}}>{i18n.General.FRONT}</button> :
+														<button class={"btn btn-square"} onClick={(e) => {
+															setPlaylistInsertInfo({
+																...playlistInsertInfo(), a: index, inserting: true
+															})
+														}}><VsInsert/></button>
+												}
+
+											</td> : null}
+
+
+										</tr>
+									}) : null
+								}
+								{
+									playlistInfo()?.owner === localStorage.getItem("uuid") ? <tr>
+										<td colspan={6} class={"text-center"} onClick={() => {
+											setPopOpened(true)
+										}}>+
+										</td>
+									</tr> : null
+								}
+
+								</tbody>
+							</table>
+						</div>
+
 
 				</div>
 			</div>
