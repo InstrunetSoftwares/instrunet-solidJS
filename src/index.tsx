@@ -6,6 +6,7 @@ import './index.css';
 import { Component, lazy } from "solid-js";
 import { Route, Router } from "@solidjs/router";
 import {BunchOfButtons, NavBar, NavBarButtonInSig} from "./Instrunet/Components/NavBar";
+import PlaylistBrowserPage from "./Instrunet/PlaylistBrowserPage";
 
 
 const root = document.getElementById('root');
@@ -111,6 +112,9 @@ render(() => {
 				<Route path={"/player"} component={() =>
 					<Wrapper Content={InstrunetPlayer} Navbar={true}/>
 				}></Route>
+				<Route path={"/playlist-browser"} component={() =><>
+					<Wrapper Content={PlaylistBrowserPage} Navbar={true}/>
+				</>}/>
 				<Route path={"/playlist/:playlistuuid"} component={() => <Wrapper Content={InstrunetPlaylist} Navbar={true}/>}/>
 				<Route path={"/secret"} component={()=><Wrapper Content={SecretPage} Navbar={false}/>}/>
 				<Route path={"/updatelog"} component={()=><>
