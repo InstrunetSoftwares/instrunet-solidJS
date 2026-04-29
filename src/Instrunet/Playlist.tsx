@@ -258,22 +258,37 @@ const Playlist = () => {
 							 }
 
 
-						 }}></div>
-					{
-						playlistInfo()?.owner === localStorage.getItem("uuid") ? <input onfocusout={(e) => {
+						 }}>
+					</div>
 
-								const value = {
-									...playlistInfo()!, title: e.target.value
-								};
-								fetch(baseUrl + "upload-playlist", {
-									method: "POST", credentials: "include", headers: {
-										"Content-Type": "application/json"
-									}, body: JSON.stringify(value)
-								}).then(()=>{
-									mutate(value)
-								})
-							}} type="text" class="text-center text-2xl font-bold mt-2"
-																						value={playlistInfo()?.title}></input> :
+					{
+						playlistInfo()?.owner === localStorage.getItem("uuid") ? <><input title={"标题不可为空"}
+																						  required minlength={1}
+																						  onfocusout={(e) => {
+																							  if (!e.target.checkValidity()) {
+																								  return;
+																							  }
+
+																							  const value = {
+																								  ...playlistInfo()!,
+																								  title: e.target.value
+																							  };
+																							  fetch(baseUrl + "upload-playlist", {
+																								  method: "POST",
+																								  credentials: "include",
+																								  headers: {
+																									  "Content-Type": "application/json"
+																								  },
+																								  body: JSON.stringify(value)
+																							  }).then(() => {
+																								  mutate(value);
+																							  });
+																						  }} type="text"
+																						  class="text-center text-2xl font-bold mt-2 validator "
+																						  value={playlistInfo()?.title}></input>
+								<p class="validator-hint text-center	 valid:block hidden">
+									标题不可为空
+								</p></>:
 							<div class="text-center text-2xl font-bold mt-2">
 								{
 									playlistInfo()?.title
