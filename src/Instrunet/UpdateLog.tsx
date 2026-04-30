@@ -7,6 +7,17 @@ const UpdateLog = ()=>{
 			<hr class={"mt-3 mb-6 text-gray-500"}/>
 			<p class={"mb-3"}>对用户有意义的更新内容将出现在这里。</p>
 			<br/>
+			<div class={"text-3xl"}>2026.04.30</div>
+			<hr class={"text-gray-700 mt-3 mb-6"}/>
+			<p style={{"white-space": "preserve"}}>
+				更新：歌单浏览器。<br/>
+				搜索及排序功能<br/>
+				<br/>
+				<div class={"text-red-600"}>我一个手滑，给数据库里的歌单全部删了......</div>
+				<br/>
+				<div class={"text-gray-500"}>...我相信，应该没有很多人用这个功能吧...应该...</div>
+			</p>
+			<br/>
 			<div class={"text-3xl"}>2026.04.29</div>
 			<hr class={"text-gray-700 mt-3 mb-6"}/>
 			<p style={{"white-space": "preserve"}}>
