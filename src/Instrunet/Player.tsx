@@ -233,7 +233,7 @@ const Player = () => {
 
 									} else {
 										let a = document.createElement("a");
-										a.href = WebRoutes.instruNet + "/login";
+										a.href = WebRoutes.instruNet + "/login?source=" + encodeURIComponent(window.location.href);
 										a.click()
 									}
 

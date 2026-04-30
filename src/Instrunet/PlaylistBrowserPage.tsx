@@ -1,6 +1,6 @@
 import {baseUrl} from "../Singletons";
 import {Suspense} from "solid-js/web";
-import {createEffect, createResource, createSignal, For} from "solid-js";
+import {createEffect, createResource, createSignal, For, on} from "solid-js";
 import playlist from "./Playlist";
 import {A} from "@solidjs/router";
 
@@ -9,9 +9,12 @@ class PlaylistBrowser{
 	constructor(url: string) {
 		this.ApiUrl = url;
 	}
-	public async BrowsePlaylist(orderType: OrderType): Promise<Playlist[]>{
+	public async BrowsePlaylist(orderType: OrderType, search?: string | null): Promise<Playlist[]>{
 		const u = new URL("playlist-browse",this.ApiUrl);
 		u.searchParams.set("ordertype", orderType.valueOf().toString())
+		if(search){
+			u.searchParams.set("search", search);
+		}
 		const res = await fetch(u);
 		if(res.ok){
 			return await res.json();
@@ -54,16 +57,38 @@ const Username = (props: { uuid: string; api: PlaylistBrowser }) => {
 };
 const PlaylistBrowserPage = ()=>{
 	let api = new PlaylistBrowser(baseUrl.substring(0, baseUrl.lastIndexOf("/")));
-	const [playlists,{refetch,mutate}] = createResource<Playlist[]>(async ()=> await api.BrowsePlaylist(OrderType.TimeDesc), {initialValue: []})
-	createEffect(()=>{
-		console.log(playlists())
-	})
+	const [orderType, setOrderType] = createSignal<OrderType>(OrderType.TimeDesc);
+	createEffect(on(orderType, ()=>{
+		refetch()
+	}))
+	const [search, setSearch] = createSignal<string | null>();
+	createEffect(on(search, ()=>{
+		refetch()
+	}))
+	const [playlists,{refetch,mutate}] = createResource<Playlist[]>(async ()=> await api.BrowsePlaylist(orderType(), search()), {initialValue: []})
+
 	return <>
 		<div class={"flex mx-15 md:mx-30 mt-5  "}>
-			<Suspense fallback={<div class={"justify-center  grow"} style={{ "align-items": "center"}}>loading</div>}>
-				<div class={"justify-center  grow"} style={{ "align-items": "center"}} >
-					<div class={"font-bold text-4xl"}>全部内容</div>
-					<div class={"grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1"}>
+			<div class={"justify-center  grow"} style={{ "align-items": "center"}} >
+				<div class={"font-bold text-4xl"}>全部内容</div>
+				<div class={"flex mt-4 gap-4"}>
+					<select class={"select "}  onInput={(e)=>{
+						setOrderType(e.target.selectedIndex.valueOf());
+
+					}}>
+						<option>时间倒序</option>
+						<option>时间正序</option>
+						<option>名称倒序</option>
+						<option>名称正序</option>
+					</select>
+					<input class={"input"} placeholder={"搜索名称，歌曲或作者"} value={search() ?? ""} onInput={(e)=>{
+						setSearch(e.target.value)
+					}}/>
+				</div>
+
+			<Suspense fallback={<div class={"justify-center  grow loading loading-spinner"} style={{ "align-items": "center"}}></div>}>
+
+					<div class={"grid lg:grid-cols-3 xl:grid-cols-4 sm:grid-cols-2 grid-cols-1"}>
 						<For each={playlists()}>
 							{
 								(f)=>{
@@ -86,12 +111,13 @@ const PlaylistBrowserPage = ()=>{
 								}
 							}
 						</For>
-					</div>
 
 
 				</div>
 
 			</Suspense>
+			</div>
+
 		</div>
 
 	</>

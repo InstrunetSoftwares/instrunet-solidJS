@@ -117,7 +117,7 @@ const Home = () => {
 				setUserInfo(j)
 			})
 		} else {
-			window.location.href = WebRoutes.instruNet + "/login"
+			window.location.href = WebRoutes.instruNet + "/login?source=" + encodeURIComponent(window.location.href)
 		}
 
 	})

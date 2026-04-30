@@ -69,7 +69,7 @@ const NavBar = ({Buttons}: {Buttons: JSX.Element}) => {
 						></div></a> :
 					<>
 						<NavBarButtonInSig
-							href={WebRoutes.instruNet + "/login"}>{i18n.General.LOGIN}</NavBarButtonInSig>
+							href={WebRoutes.instruNet + "/login?source=" + encodeURIComponent(window.location.href)}>{i18n.General.LOGIN}</NavBarButtonInSig>
 						<NavBarButtonInSig
 							href={WebRoutes.instruNet + "/register"}>{i18n.General.REG}</NavBarButtonInSig>
 					</> : null

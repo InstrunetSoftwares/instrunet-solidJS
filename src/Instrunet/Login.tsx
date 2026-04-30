@@ -1,8 +1,12 @@
 import {baseUrl, i18n, WebRoutes} from "../Singletons";
 import {BiRegularLeftArrowAlt} from "solid-icons/bi";
 import {createSignal} from "solid-js";
+import {useSearchParams} from "@solidjs/router";
 
 const Login = () => {
+
+	const [param, setParam] = useSearchParams();
+
 	document.title="登录 | 伴奏网"
 	enum PageStatus {
 		FIRST_LOAD, LOGGING, ERROR, SUCCESS
@@ -86,7 +90,7 @@ const Login = () => {
 											response.json().then(data => {
 												localStorage.setItem("uuid", data.uid)
 												setTimeout(()=>{
-													window.location.replace(WebRoutes.instruNet)
+													window.location.replace(param["source"]?.toString() ?? WebRoutes.instruNet)
 												}, 1000)
 											})
 
