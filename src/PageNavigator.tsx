@@ -30,8 +30,21 @@ const PageNavigator: Component = () => {
               <CardThisPage href={WebRoutes.instruNet} title={i18n.Instrunet.TITLE} info={i18n.Instrunet.DESC}/>
 
             {/*<CardThisPage href={WebRoutes.speechToText} title={i18n.STT.TITLE} info={i18n.STT.DESC}/>*/}
-            <CardThisPage href={"https://andyxie.cn:5000"} title={i18n.Sanctuary.TITLE} info={i18n.Sanctuary.DESC}/>
-            <CardThisPage href={WebRoutes.unlockMusic} title={i18n.MusicUnlock.TITLE} info={i18n.MusicUnlock.DESC}/>
+			  <div onClick={()=>{
+
+			  }} class={"card bg-base-100 shadow-sm sm:max-w-100 "  + " "  + style.card} >
+				  <div class={"card-body"}>
+					  <div class={"card-title flex justify-between"}>
+						  {"PromptFlash"}
+						  <span class={"badge badge-warning"}>新</span>
+					  </div>
+					  <p>
+						  {"焚决专用收集论坛有感觉吗"}
+					  </p>
+					  <a class={"btn "} href={"https://andyxie.cn:8000" }>{i18n.General.ACCESS}</a>
+				  </div>
+			  </div>
+            <CardThisPage  href={WebRoutes.unlockMusic} title={i18n.MusicUnlock.TITLE} info={i18n.MusicUnlock.DESC}/>
             {/*<CardThisPage href={"https://andyxie.cn:4001"} title={i18n.JustTalk.TITLE} info={i18n.JustTalk.DESC}/>*/}
 
           </div>
@@ -46,10 +59,10 @@ const PageNavigator: Component = () => {
     </div>
   </>
 };
-const CardThisPage = ({title, info, href}: {title:string, info: string, href?: string })=> {
+const CardThisPage = ({title, info, href, _class}: {title:string, info: string, href?: string, _class?:string })=> {
   return <div onClick={()=>{
 
-  }} class={"card bg-base-100 shadow-sm sm:max-w-100  " + style.card} >
+  }} class={"card bg-base-100 shadow-sm sm:max-w-100 " + _class + " "  + style.card} >
     <div class={"card-body"}>
       <div class={"card-title"}>
         {title}
