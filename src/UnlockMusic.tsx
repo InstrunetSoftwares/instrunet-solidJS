@@ -26,9 +26,6 @@ const UnlockMusic = ()=>{
 				formData.append("file", e.target.files[0])
 				fetch(baseUrl + "api/decrypter/decrypterSubmit", {
 					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
 					body: formData
 				}).then(res => {
 					if(res.ok){
