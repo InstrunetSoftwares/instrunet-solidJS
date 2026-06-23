@@ -5,9 +5,11 @@ const UnlockMusic = ()=>{
 	return <>
 		<div class={"md:max-w-250 mt-10 mx-auto max-w-full"}>
 			<h1 class={"text-7xl"}>音乐解锁</h1>
+			<div>经过修改已经完全可用（仅限制于下载速度）。</div>
 			<div><a class={"link link-info"} href={"https://git.unlock-music.dev/um/web"}>Unlock Music项目</a></div>
 			<div>部分解锁需旧版本 网易云全版本可用 <a class={"link link-info"} href={baseUrl + "api/decrypter/qqm"}>QQ音乐旧版本Windows下载</a></div>
 			<div>状态：<div id={"status"}>等待上传。</div></div>
+
 			<input class={" file-input"} type={"file"} onchange={(e)=>{
 				e.target.disabled = true;
 				let statusReport = document.getElementById("status")!;
@@ -17,40 +19,33 @@ const UnlockMusic = ()=>{
 					e.target.disabled = false;
 					return;
 				}
-				const fileReader = new FileReader();
-				fileReader.onloadend = ()=> {
-					fetch(baseUrl + "api/decrypter/decrypterSubmit", {
-						method: "POST",
-						headers: {
-							"Content-Type": "application/json",
-						},
-						body: JSON.stringify({
-							fileInDataUri : fileReader.result,
-							fileName: e.target.files![0].name
-						})
-					}).then(res => {
-						if(res.ok){
-							statusReport.innerText = "成功"
-							e.target.disabled = false;
-							res.json().then(j=>{
-								let url = URL.createObjectURL(dataURLtoBlob(j.data)); 
-								let anchor = document.createElement("a");
-								anchor.classList.add("hidden");  
-								anchor.href = url; 
-								anchor.download = j.fileName; 
-								document.body.appendChild(anchor); 
-								anchor.click(); 
-							})
-						}else{
-							res.text().then(data => {
-								statusReport.innerText = "失败：" + data
-								e.target.disabled = false;
-							})
-						}
-					})
-				}
-				fileReader.readAsDataURL(e.target.files[0]);
+
+
 				statusReport.innerText = "正在上传……";
+				const formData = new FormData();
+				formData.append("file", e.target.files[0])
+				fetch(baseUrl + "api/decrypter/decrypterSubmit", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: formData
+				}).then(res => {
+					if(res.ok){
+						statusReport.innerText = "成功，正在下载……"
+						res.blob().then(o=> {
+							let a = new HTMLAnchorElement()
+							a.href = URL.createObjectURL(o)
+							document.body.append(a)
+							a.click()
+						})
+					}else{
+						res.text().then(data => {
+							statusReport.innerText = "失败：" + data
+							e.target.disabled = false;
+						})
+					}
+				})
 
 
 			}}/>
