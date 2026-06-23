@@ -31,7 +31,7 @@ const UnlockMusic = ()=>{
 					if(res.ok){
 						statusReport.innerText = "成功，正在下载……"
 						res.blob().then(o=> {
-							let a = new HTMLAnchorElement()
+							let a = document.createElement("a")
 							a.href = URL.createObjectURL(o)
 							document.body.append(a)
 							a.click()
